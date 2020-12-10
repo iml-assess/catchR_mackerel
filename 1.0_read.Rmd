@@ -1,0 +1,183 @@
+---
+title: "Read"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float:
+      collapsed: FALSE
+    code_folding: show
+    number_sections: TRUE
+---
+
+# SET-UP
+
+```{r markdown, echo=F}
+library(knitr)
+opts_chunk$set(echo = T, collapse = T, fig.align = "center", fig.width = 9, fig.height = 6)
+options(width = 120)
+```    
+
+```{r settings, message = F}
+source('0.0_settings.R')
+```
+
+# CATCH
+## ZIFF
+
+```{r ziff, message = F}
+ziffR <- paste0(dir.rdat, "ziff.Rdata")
+sp_code <- find.speciescode(my.species);sp_code[,c(1:2)]
+
+if(!file.exists(ziffR)){
+    ziff <- read.ziff(speciescode=sp_code[,1],path=dir.ziff,year=my.year)
+    
+    # Species included:
+    with(ziff, table(species,year))
+    ziff <- ziff[ziff$species==250,]   # code 960: few heads in 1996  code 951: wrong whelk
+
+    save(ziff, file = ziffR)
+}else{
+    load(ziffR)
+}
+
+```
+### CHECK {.tabset}
+#### areas
+```{r ziff areas}
+# NAFO 5 = landings in Canadian EEZ (northern contingent)
+kable(with(ziff, table(nafo,month)))     
+```
+#### NA weights
+```{r ziff nas}
+na <- cbind(all=with(ziff,table(year,useNA = 'always')),
+                na=with(ziff[is.na(ziff$catch),],table(year,useNA = 'always')))
+kable(na)
+```
+#### 0 weights
+```{r ziff zeros}
+with(ziff[!is.na(ziff$catch) & ziff$catch==0,],table(year))
+```
+
+## NAFO
+
+```{r nafo, message = F}
+nafoAR <- paste0(dir.rdat, "nafoA.Rdata")
+nafoBR <- paste0(dir.rdat, "nafoB.Rdata")
+
+if(!all(file.exists(c(nafoAR,nafoBR)))){
+    ### NAFO database A (annual) ---------------------------------
+    nafoA <- read.nafoA(paste0(dir.nafo,'statlandA.csv')) 
+    
+    # select species
+    nafoA <- nafoA[grepl('Atlantic mackerel',nafoA$species.name,ignore.case = TRUE),]
+    table(nafoA$species.name)
+    
+    # select years
+    nafoA <- nafoA[nafoA$year %in% my.year,]
+    
+    # Canadian caught mackerel outside of my.nafo
+    with(nafoA[!grepl(paste0(my.nafo, collapse = "|"),nafoA$nafo)&
+                 grepl('canada',nafoA$country,ignore.case = TRUE),] ,table(year,nafo))
+
+    # only keep my.nafo; other areas are NOT from nothern contingent (winter months in US or Europe)
+    nafoA <- nafoA[grepl(paste0(my.nafo, collapse = "|"),nafoA$nafo),] 
+    table(nafoA$nafo)
+    
+    save(nafoA, file = nafoAR)
+    
+    ### NAFO data base B (monthly) ---------------------------------
+    nafoB <- read.nafoB(path=dir.nafo,year=my.year,overwrite=FALSE)     
+    
+    # select species
+    nafoB <- nafoB[nafoB$species.name==toupper(my.species),]
+    table(nafoB$species.name)
+    
+    # select year
+    nafoB <- nafoB[nafoB$year %in% my.year,]
+    
+    # Canadian caught mackerel outside of my.nafo
+    with(nafoB[!grepl(paste0(my.nafo, collapse = "|"),nafoB$nafo)&
+                 grepl('canada',nafoB$country,ignore.case = TRUE),] ,table(year,nafo))
+    with(nafoB[!grepl(paste0(my.nafo, collapse = "|"),nafoB$nafo)&
+                 grepl('canada',nafoB$country,ignore.case = TRUE),] ,table(month,nafo))
+    
+    # only keep my.nafo  (though 5Ze in summer; wouldn't they be northern contingent fish??)
+    nafoB <- nafoB[grepl(paste0(my.nafo, collapse = "|"),nafoB$nafo),] 
+    table(nafoB$nafo)
+    
+    # remove useless columns 
+    nafoB <- nafoB[,c('year','month','country','nafo','gear','gear.cat','tonnage.class','prov','catch')]
+
+    save(nafoB, file = nafoBR)
+}else{
+    load(nafoAR)
+    load(nafoBR)
+}
+```
+### CHECK {.tabset}
+#### compare
+```{r nafo comp}
+ggplot()+
+    geom_bar(data=nafoA,aes(x=year,y=catch),stat='identity',alpha=0.2,fill='blue')+
+    geom_bar(data=nafoB,aes(x=year,y=catch),stat='identity',alpha=0.2,fill='red')+
+    geom_vline(xintercept=1985)+
+    scale_x_continuous(expand=c(0,0))+ scale_y_continuous(expand=c(0,0))
+```
+
+## CATCH = NAFO + ZIFF
+
+```{r nafoziff, message = F}
+## bind both
+ziff$source <-'ziff'
+ziff$catch <- ziff$catch/1000            # kg to tonnes
+ziff$country <- 'Canada'                 # consistency with nafo
+ziff$prov <- ifelse(ziff$prov.land=='Unknown',as.character(ziff$prov.home),as.character(ziff$prov.land))
+
+nafoB$source <- 'nafo'                   # work with detailed B base
+
+sel <- c('year','month','nafo','gear.cat','source','catch','country','prov')
+catch <- rbind(ziff[ziff$year>=1995,sel],nafoB[nafoB$year<1995,sel])       # ziff from 1995 onwards, nafoB before
+
+save(catch, file = paste0(dir.rdat, "catch.Rdata"))
+
+plotCatch(catch,x='year',y='catch')
+```
+
+# LENGTH-FREQUENCIES
+
+```{r lf, message = F}
+lfR <- paste0(dir.rdat, "lf.Rdata")
+if(!file.exists(lfR)){
+    lf <- read.lf(file=paste0(dir.bio,'lf.dat'))
+    lf <- lf[lf$year %in% my.year,]
+    
+    # correct weight if necessary  (not currently the case for mackerel)
+    st <- table(lf$state.id);st
+      #lf$weight.land <- correct.weight(lf$weight.land,lf$state.id,species=my.species)
+      #lf$weight.sample <- correct.weight(lf$weight.sample,lf$state.id,species=my.species)
+    
+    save(lf, file = lfR)
+}else{
+    load(lfR)
+}
+
+```
+
+# BIO
+
+```{r bio, message = F}
+bioR <- paste0(dir.rdat, "bio.Rdata")
+if(!file.exists(bioR)){
+    bio <- read.bio(file=paste0(dir.bio,'carbio.dat'),species=my.species)
+    bio <- bio[bio$year %in% my.year,]
+    
+    save(bio, file = bioR)
+}else{
+    load(bioR)
+}
+```
+
+
+

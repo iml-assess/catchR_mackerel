@@ -1,0 +1,21 @@
+nafo	region
+2G	eNL
+2J	eNL
+3K	eNL
+3L	eNL
+3N	sNL
+3O	sNL
+3P	sNL
+3PN	sNL
+3PS	sNL
+4R	wNL
+4S	nGSL
+4T	sGSL
+4V	SS
+4VN	SS
+4VS	SS
+4W	SS
+4X	SS
+5Y	SS
+5ZE	SS
+

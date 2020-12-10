@@ -1,0 +1,11 @@
+---
+title: "Mackerel"
+output:
+    html_document:
+        toc: false
+---
+
+!!! Still working on it!!!
+
+So far mainly intended to try calculating various mackerel stuff on a regional level.
+

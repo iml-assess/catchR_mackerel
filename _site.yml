@@ -1,0 +1,27 @@
+name: "Mackerel"
+navbar:
+  title: "Mackerel"
+  left:
+    - icon: fa-cogs
+      href: 0.0_settings.html
+    - text: "Data"
+      href: 1.0_read.html
+    - text: "Landings"
+      menu:
+        - text: "Overview"
+          href: 2.0_landings.html
+        - text: "Comparison"
+          href: 2.1_landings_comparison.html
+    - text: "CAA"
+      menu:
+        - text: "Calculation"
+          href: 3.0_caa.html
+        - text: "Comparison"
+          href: 3.1_caa_comparison.html
+        - text: "Regional"
+          href: 3.2_caa_region.html
+output:
+  html_document:
+    theme: cosmo
+    highlight: textmate
+    css: styles.css

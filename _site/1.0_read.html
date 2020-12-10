@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+<meta name="date" content="2020-12-10" />
+
+<title>Read</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Mackerel</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="0.0_settings.html">
+    <span class="fa fa-cogs"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="1.0_read.html">Data</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Landings
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="2.0_landings.html">Overview</a>
+    </li>
+    <li>
+      <a href="2.1_landings_comparison.html">Comparison</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    CAA
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="3.0_caa.html">Calculation</a>
+    </li>
+    <li>
+      <a href="3.1_caa_comparison.html">Comparison</a>
+    </li>
+    <li>
+      <a href="3.2_caa_region.html">Regional</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Read</h1>
+<h4 class="date">2020-12-10</h4>
+
+</div>
+
+
+<div id="set-up" class="section level1">
+<h1><span class="header-section-number">1</span> SET-UP</h1>
+<pre class="r"><code>source(&#39;0.0_settings.R&#39;)</code></pre>
+</div>
+<div id="catch" class="section level1">
+<h1><span class="header-section-number">2</span> CATCH</h1>
+<div id="ziff" class="section level2">
+<h2><span class="header-section-number">2.1</span> ZIFF</h2>
+<pre class="r"><code>ziffR &lt;- paste0(dir.rdat, &quot;ziff.Rdata&quot;)
+sp_code &lt;- find.speciescode(my.species);sp_code[,c(1:2)]
+##     cod_esp                             esp_nom_en
+## 50      248   Mackerel bait (fishing licence only)
+## 51      249  Mackerel commercial (fishing licence)
+## 52      250                               Mackerel
+## 169     951 Exploratory mackerel (fishing licence)
+## 178     960                          Mackerel head
+
+if(!file.exists(ziffR)){
+    ziff &lt;- read.ziff(speciescode=sp_code[,1],path=dir.ziff,year=my.year)
+    
+    # Species included:
+    with(ziff, table(species,year))
+    ziff &lt;- ziff[ziff$species==250,]   # code 960: few heads in 1996  code 951: wrong whelk
+
+    save(ziff, file = ziffR)
+}else{
+    load(ziffR)
+}</code></pre>
+<div id="check" class="section level3 tabset">
+<h3><span class="header-section-number">2.1.1</span> CHECK</h3>
+<div id="areas" class="section level4">
+<h4><span class="header-section-number">2.1.1.1</span> areas</h4>
+<pre class="r"><code># NAFO 5 = landings in Canadian EEZ (northern contingent)
+kable(with(ziff, table(nafo,month)))     </code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">1</th>
+<th align="right">2</th>
+<th align="right">3</th>
+<th align="right">4</th>
+<th align="right">5</th>
+<th align="right">6</th>
+<th align="right">7</th>
+<th align="right">8</th>
+<th align="right">9</th>
+<th align="right">10</th>
+<th align="right">11</th>
+<th align="right">12</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">2G</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">2J</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">22</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">3K</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">1</td>
+<td align="right">18</td>
+<td align="right">4189</td>
+<td align="right">8042</td>
+<td align="right">3270</td>
+<td align="right">1140</td>
+<td align="right">77</td>
+</tr>
+<tr class="even">
+<td align="left">3L</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">630</td>
+<td align="right">2185</td>
+<td align="right">1036</td>
+<td align="right">423</td>
+<td align="right">4</td>
+</tr>
+<tr class="odd">
+<td align="left">3O</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">3PN</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">71</td>
+<td align="right">469</td>
+<td align="right">369</td>
+<td align="right">449</td>
+<td align="right">174</td>
+<td align="right">3</td>
+</tr>
+<tr class="odd">
+<td align="left">3PS</td>
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">57</td>
+<td align="right">927</td>
+<td align="right">373</td>
+<td align="right">57</td>
+<td align="right">72</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">4R</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">1</td>
+<td align="right">11</td>
+<td align="right">866</td>
+<td align="right">5639</td>
+<td align="right">4853</td>
+<td align="right">3117</td>
+<td align="right">303</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">4S</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">243</td>
+<td align="right">442</td>
+<td align="right">46</td>
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">4T</td>
+<td align="right">5</td>
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">127</td>
+<td align="right">2369</td>
+<td align="right">23388</td>
+<td align="right">9199</td>
+<td align="right">22667</td>
+<td align="right">19913</td>
+<td align="right">9643</td>
+<td align="right">1301</td>
+<td align="right">7</td>
+</tr>
+<tr class="odd">
+<td align="left">4VN</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">283</td>
+<td align="right">908</td>
+<td align="right">479</td>
+<td align="right">308</td>
+<td align="right">346</td>
+<td align="right">273</td>
+<td align="right">41</td>
+<td align="right">1</td>
+</tr>
+<tr class="even">
+<td align="left">4VS</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">45</td>
+<td align="right">18</td>
+<td align="right">15</td>
+<td align="right">34</td>
+<td align="right">4</td>
+<td align="right">2</td>
+<td align="right">1</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">4W</td>
+<td align="right">628</td>
+<td align="right">312</td>
+<td align="right">262</td>
+<td align="right">1049</td>
+<td align="right">2318</td>
+<td align="right">948</td>
+<td align="right">322</td>
+<td align="right">302</td>
+<td align="right">349</td>
+<td align="right">366</td>
+<td align="right">420</td>
+<td align="right">425</td>
+</tr>
+<tr class="even">
+<td align="left">4X</td>
+<td align="right">50</td>
+<td align="right">226</td>
+<td align="right">153</td>
+<td align="right">240</td>
+<td align="right">3989</td>
+<td align="right">3349</td>
+<td align="right">1494</td>
+<td align="right">2983</td>
+<td align="right">3716</td>
+<td align="right">2310</td>
+<td align="right">1672</td>
+<td align="right">69</td>
+</tr>
+<tr class="odd">
+<td align="left">5Y</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">7</td>
+<td align="right">3</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">19</td>
+<td align="right">11</td>
+</tr>
+<tr class="even">
+<td align="left">5ZE</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">22</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">9</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="na-weights" class="section level4">
+<h4><span class="header-section-number">2.1.1.2</span> NA weights</h4>
+<pre class="r"><code>na &lt;- cbind(all=with(ziff,table(year,useNA = &#39;always&#39;)),
+                na=with(ziff[is.na(ziff$catch),],table(year,useNA = &#39;always&#39;)))
+kable(na)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">all</th>
+<th align="right">na</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">1985</td>
+<td align="right">14767</td>
+<td align="right">2</td>
+</tr>
+<tr class="even">
+<td align="left">1986</td>
+<td align="right">12769</td>
+<td align="right">1</td>
+</tr>
+<tr class="odd">
+<td align="left">1987</td>
+<td align="right">14234</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="left">1988</td>
+<td align="right">9872</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">1989</td>
+<td align="right">7392</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="left">1990</td>
+<td align="right">9654</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="left">1991</td>
+<td align="right">10577</td>
+<td align="right">8</td>
+</tr>
+<tr class="even">
+<td align="left">1992</td>
+<td align="right">8498</td>
+<td align="right">6</td>
+</tr>
+<tr class="odd">
+<td align="left">1993</td>
+<td align="right">10246</td>
+<td align="right">3</td>
+</tr>
+<tr class="even">
+<td align="left">1994</td>
+<td align="right">9993</td>
+<td align="right">33</td>
+</tr>
+<tr class="odd">
+<td align="left">1995</td>
+<td align="right">10199</td>
+<td align="right">90</td>
+</tr>
+<tr class="even">
+<td align="left">1996</td>
+<td align="right">12636</td>
+<td align="right">49</td>
+</tr>
+<tr class="odd">
+<td align="left">1997</td>
+<td align="right">11238</td>
+<td align="right">50</td>
+</tr>
+<tr class="even">
+<td align="left">1998</td>
+<td align="right">11051</td>
+<td align="right">36</td>
+</tr>
+<tr class="odd">
+<td align="left">1999</td>
+<td align="right">9107</td>
+<td align="right">35</td>
+</tr>
+<tr class="even">
+<td align="left">2000</td>
+<td align="right">10137</td>
+<td align="right">20</td>
+</tr>
+<tr class="odd">
+<td align="left">2001</td>
+<td align="right">7466</td>
+<td align="right">26</td>
+</tr>
+<tr class="even">
+<td align="left">2002</td>
+<td align="right">8935</td>
+<td align="right">17</td>
+</tr>
+<tr class="odd">
+<td align="left">2003</td>
+<td align="right">12322</td>
+<td align="right">39</td>
+</tr>
+<tr class="even">
+<td align="left">2004</td>
+<td align="right">12760</td>
+<td align="right">19</td>
+</tr>
+<tr class="odd">
+<td align="left">2005</td>
+<td align="right">20695</td>
+<td align="right">74</td>
+</tr>
+<tr class="even">
+<td align="left">2006</td>
+<td align="right">14757</td>
+<td align="right">23</td>
+</tr>
+<tr class="odd">
+<td align="left">2007</td>
+<td align="right">9453</td>
+<td align="right">39</td>
+</tr>
+<tr class="even">
+<td align="left">2008</td>
+<td align="right">6601</td>
+<td align="right">10</td>
+</tr>
+<tr class="odd">
+<td align="left">2009</td>
+<td align="right">8323</td>
+<td align="right">6</td>
+</tr>
+<tr class="even">
+<td align="left">2010</td>
+<td align="right">9570</td>
+<td align="right">5</td>
+</tr>
+<tr class="odd">
+<td align="left">2011</td>
+<td align="right">7094</td>
+<td align="right">21</td>
+</tr>
+<tr class="even">
+<td align="left">2012</td>
+<td align="right">5866</td>
+<td align="right">37</td>
+</tr>
+<tr class="odd">
+<td align="left">2013</td>
+<td align="right">4999</td>
+<td align="right">18</td>
+</tr>
+<tr class="even">
+<td align="left">2014</td>
+<td align="right">4465</td>
+<td align="right">24</td>
+</tr>
+<tr class="odd">
+<td align="left">2015</td>
+<td align="right">4772</td>
+<td align="right">26</td>
+</tr>
+<tr class="even">
+<td align="left">2016</td>
+<td align="right">6819</td>
+<td align="right">27</td>
+</tr>
+<tr class="odd">
+<td align="left">2017</td>
+<td align="right">11416</td>
+<td align="right">50</td>
+</tr>
+<tr class="even">
+<td align="left">2018</td>
+<td align="right">8573</td>
+<td align="right">23</td>
+</tr>
+<tr class="odd">
+<td align="left">2019</td>
+<td align="right">7839</td>
+<td align="right">452</td>
+</tr>
+<tr class="even">
+<td align="left">NA</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="weights" class="section level4">
+<h4><span class="header-section-number">2.1.1.3</span> 0 weights</h4>
+<pre class="r"><code>with(ziff[!is.na(ziff$catch) &amp; ziff$catch==0,],table(year))
+## &lt; table of extent 0 &gt;</code></pre>
+</div>
+</div>
+</div>
+<div id="nafo" class="section level2">
+<h2><span class="header-section-number">2.2</span> NAFO</h2>
+<pre class="r"><code>nafoAR &lt;- paste0(dir.rdat, &quot;nafoA.Rdata&quot;)
+nafoBR &lt;- paste0(dir.rdat, &quot;nafoB.Rdata&quot;)
+
+if(!all(file.exists(c(nafoAR,nafoBR)))){
+    ### NAFO database A (annual) ---------------------------------
+    nafoA &lt;- read.nafoA(paste0(dir.nafo,&#39;statlandA.csv&#39;)) 
+    
+    # select species
+    nafoA &lt;- nafoA[grepl(&#39;Atlantic mackerel&#39;,nafoA$species.name,ignore.case = TRUE),]
+    table(nafoA$species.name)
+    
+    # select years
+    nafoA &lt;- nafoA[nafoA$year %in% my.year,]
+    
+    # Canadian caught mackerel outside of my.nafo
+    with(nafoA[!grepl(paste0(my.nafo, collapse = &quot;|&quot;),nafoA$nafo)&amp;
+                 grepl(&#39;canada&#39;,nafoA$country,ignore.case = TRUE),] ,table(year,nafo))
+
+    # only keep my.nafo; other areas are NOT from nothern contingent (winter months in US or Europe)
+    nafoA &lt;- nafoA[grepl(paste0(my.nafo, collapse = &quot;|&quot;),nafoA$nafo),] 
+    table(nafoA$nafo)
+    
+    save(nafoA, file = nafoAR)
+    
+    ### NAFO data base B (monthly) ---------------------------------
+    nafoB &lt;- read.nafoB(path=dir.nafo,year=my.year,overwrite=FALSE)     
+    
+    # select species
+    nafoB &lt;- nafoB[nafoB$species.name==toupper(my.species),]
+    table(nafoB$species.name)
+    
+    # select year
+    nafoB &lt;- nafoB[nafoB$year %in% my.year,]
+    
+    # Canadian caught mackerel outside of my.nafo
+    with(nafoB[!grepl(paste0(my.nafo, collapse = &quot;|&quot;),nafoB$nafo)&amp;
+                 grepl(&#39;canada&#39;,nafoB$country,ignore.case = TRUE),] ,table(year,nafo))
+    with(nafoB[!grepl(paste0(my.nafo, collapse = &quot;|&quot;),nafoB$nafo)&amp;
+                 grepl(&#39;canada&#39;,nafoB$country,ignore.case = TRUE),] ,table(month,nafo))
+    
+    # only keep my.nafo  (though 5Ze in summer; wouldn&#39;t they be northern contingent fish??)
+    nafoB &lt;- nafoB[grepl(paste0(my.nafo, collapse = &quot;|&quot;),nafoB$nafo),] 
+    table(nafoB$nafo)
+    
+    # remove useless columns 
+    nafoB &lt;- nafoB[,c(&#39;year&#39;,&#39;month&#39;,&#39;country&#39;,&#39;nafo&#39;,&#39;gear&#39;,&#39;gear.cat&#39;,&#39;tonnage.class&#39;,&#39;prov&#39;,&#39;catch&#39;)]
+
+    save(nafoB, file = nafoBR)
+}else{
+    load(nafoAR)
+    load(nafoBR)
+}</code></pre>
+<div id="check-1" class="section level3 tabset">
+<h3><span class="header-section-number">2.2.1</span> CHECK</h3>
+<div id="compare" class="section level4">
+<h4><span class="header-section-number">2.2.1.1</span> compare</h4>
+<pre class="r"><code>ggplot()+
+    geom_bar(data=nafoA,aes(x=year,y=catch),stat=&#39;identity&#39;,alpha=0.2,fill=&#39;blue&#39;)+
+    geom_bar(data=nafoB,aes(x=year,y=catch),stat=&#39;identity&#39;,alpha=0.2,fill=&#39;red&#39;)+
+    geom_vline(xintercept=1985)+
+    scale_x_continuous(expand=c(0,0))+ scale_y_continuous(expand=c(0,0))</code></pre>
+<p><img src="1.0_read_files/figure-html/nafo%20comp-1.png" width="864" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+</div>
+<div id="catch-nafo-ziff" class="section level2">
+<h2><span class="header-section-number">2.3</span> CATCH = NAFO + ZIFF</h2>
+<pre class="r"><code>## bind both
+ziff$source &lt;-&#39;ziff&#39;
+ziff$catch &lt;- ziff$catch/1000            # kg to tonnes
+ziff$country &lt;- &#39;Canada&#39;                 # consistency with nafo
+ziff$prov &lt;- ifelse(ziff$prov.land==&#39;Unknown&#39;,as.character(ziff$prov.home),as.character(ziff$prov.land))
+
+nafoB$source &lt;- &#39;nafo&#39;                   # work with detailed B base
+
+sel &lt;- c(&#39;year&#39;,&#39;month&#39;,&#39;nafo&#39;,&#39;gear.cat&#39;,&#39;source&#39;,&#39;catch&#39;,&#39;country&#39;,&#39;prov&#39;)
+catch &lt;- rbind(ziff[ziff$year&gt;=1995,sel],nafoB[nafoB$year&lt;1995,sel])       # ziff from 1995 onwards, nafoB before
+
+save(catch, file = paste0(dir.rdat, &quot;catch.Rdata&quot;))
+
+plotCatch(catch,x=&#39;year&#39;,y=&#39;catch&#39;)
+## Warning: Removed 1216 rows containing missing values (position_stack).</code></pre>
+<p><img src="1.0_read_files/figure-html/nafoziff-1.png" width="864" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="length-frequencies" class="section level1">
+<h1><span class="header-section-number">3</span> LENGTH-FREQUENCIES</h1>
+<pre class="r"><code>lfR &lt;- paste0(dir.rdat, &quot;lf.Rdata&quot;)
+if(!file.exists(lfR)){
+    lf &lt;- read.lf(file=paste0(dir.bio,&#39;lf.dat&#39;))
+    lf &lt;- lf[lf$year %in% my.year,]
+    
+    # correct weight if necessary  (not currently the case for mackerel)
+    st &lt;- table(lf$state.id);st
+      #lf$weight.land &lt;- correct.weight(lf$weight.land,lf$state.id,species=my.species)
+      #lf$weight.sample &lt;- correct.weight(lf$weight.sample,lf$state.id,species=my.species)
+    
+    save(lf, file = lfR)
+}else{
+    load(lfR)
+}</code></pre>
+</div>
+<div id="bio" class="section level1">
+<h1><span class="header-section-number">4</span> BIO</h1>
+<pre class="r"><code>bioR &lt;- paste0(dir.rdat, &quot;bio.Rdata&quot;)
+if(!file.exists(bioR)){
+    bio &lt;- read.bio(file=paste0(dir.bio,&#39;carbio.dat&#39;),species=my.species)
+    bio &lt;- bio[bio$year %in% my.year,]
+    
+    save(bio, file = bioR)
+}else{
+    load(bioR)
+}</code></pre>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

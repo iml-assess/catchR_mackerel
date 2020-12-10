@@ -1,0 +1,314 @@
+---
+title: "Catch-at-age"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float:
+      collapsed: FALSE
+    code_folding: show
+    number_sections: TRUE
+---
+    
+# SET-UP
+```{r  markdown, echo=F}
+library(knitr)
+opts_chunk$set(echo = T, collapse = T, fig.align = "center", fig.width = 9, fig.height = 6)
+options(width = 120)
+```    
+
+## settings
+```{r settings, message = F}
+source('0.0_settings.R')
+```
+
+## load all data
+```{r data, message = F}
+load(paste0(dir.rdat, "catch.Rdata"))                                # from 1.0 read
+load(paste0(dir.rdat, "bio.Rdata"))                                  # from 1.0 read
+load(paste0(dir.rdat, "lf.Rdata"))                                   # from 1.0 read
+group.region <- read.table(paste0(dir.dat,'caa_group_region.txt'),header=T)
+group.gear <- read.table(paste0(dir.dat,'caa_group_gear.txt'),header=T)
+```
+
+# LENGTH-WEIGHT RELATIONSHIPS 
+
+Sample weights are often missing and apparently are not precise. Therefore, the weight of a sample is estimated based on the length of the individuals and their number sampled. This section fits length-weight relationships for all years and periods. Bio samples are used ('carbio').
+
+```{r lw, message = F}
+
+## subset
+lw <- bio[!is.na(bio$length) & !is.na(bio$weight),c('year','trim','length','weight')]
+lw$logw <- log(lw$weight)           
+lw$logl <- log(lw$length)          
+
+## remove extremes
+# ggplot(lw,aes(x=logl,y=logw))+geom_point()
+lw <- lw[lw$logw>0 & lw$logl>3,]                         # minimal weight and length 
+
+## relationships by year and period (quarter) (!robuust regression instead of removing subjectively some points each year!)
+lw.modR <- paste0(dir.rdat, "lw.mod.Rdata")
+
+if(!file.exists(lw.modR)){
+    lw.mod <- with(lw,fit.lw(logl,logw,year,trim,tresh=300,period.unit='quarter'))
+    save(lw.mod, file =  lw.modR)
+}else{ 
+    load(lw.modR)
+}
+```
+
+## CHECK {.tabset}
+### Prediction
+```{r lw fit}
+check <- expand.grid.df(lw.mod,data.frame(length=0:ceiling(max(lf$length))))
+check$weight <- with(check,exp(intercept+slope*log(length))*cf)
+ggplot(check,aes(x=length,y=weight,col=year,group=year))+
+    geom_line(size=0.5)+
+    facet_wrap(~period)+
+    scale_y_continuous(limits=c(0,max(lw$weight)))+
+    scale_color_viridis_c()+
+    labs(title='Predicted length-weight relationships')
+```
+
+
+# LENGTH-FREQUENCY DATA
+
+```{r lf, message = F, fig.height = 3,fig.width = 4}
+## subset
+lf.caa <- lf[,c('year','trim','nafo','gear.cat','length','n','sample.id')]
+
+## group regions and gears
+# PERIOD: quarter
+names(lf.caa)[2] <- 'period'
+
+# REGION: large scale regions 
+lf.caa$region <- group.region[match(lf.caa$nafo,group.region$nafo),'region']
+lf.caa$nafo <- NULL
+
+# GEAR: similar selectivity gears
+lf.caa$gear <- group.gear[match(lf.caa$gear.cat,group.gear$gear.cat),'gear.group']
+lf.caa$gear.cat <- NULL
+
+## convert lengths to sample weights (kg)
+lf.caa <- merge(lf.caa,lw.mod,all.x=T)
+lf.caa$weight.sample <- with(lf.caa,exp(intercept+slope*log(length))*cf*n/100)
+
+## make equal length classes
+table(lf$length.bin)
+lf.caa$length <-roundFish(lf.caa$length,5)  
+
+save(lf.caa, file =  paste0(dir.rdat, "lf.caa.Rdata"))
+
+```
+
+## CHECK {.tabset}
+
+### model samples
+```{r table lw, echo=FALSE}
+check <- unique(lf.caa[,c('year','period','option')])
+kable(with(check,table(option,period)))
+```
+### predictions
+```{r plot lw, echo=FALSE, fig.height = 3,fig.width = 10}
+grid.arrange(
+  ggplot(lf.caa,aes(x=weight.sample/n))+geom_histogram(binwidth = 1)+labs(title='Predicted unit weights',x='Weight (kg)'),
+  ggplot(lf.caa,aes(x=weight.sample))+geom_histogram(binwidth = 10)+labs(title='Predicted sample weights',x='Weight (kg)'),
+  ncol=2
+)
+```
+
+## TABLES {.tabset}
+```{r lf tab1}
+df <- lf.caa
+df$id <- with(df,paste(sample.id,year,period,region,gear),collapse='.')
+```
+### period
+```{r lf tab2}
+dfp <- ddply(df,c('year','period'),summarise,N=length(unique(id)),n=sum(n))
+dfp <- dcast(dfp,year~period,value.var='N',fill = 0)
+dfp$total <- rowSums(dfp[,-1])
+kable(dfp)
+```
+### region
+```{r lf tab3}
+dfr <- ddply(df,c('year','region'),summarise,N=length(unique(id)),n=sum(n))
+dfr <- dcast(dfr,year~region,value.var='N',fill = 0)
+dfr$total <- rowSums(dfr[,-1])
+kable(dfr)
+```
+### gear
+```{r lf tab4}
+dfg <- ddply(df,c('year','gear'),summarise,N=length(unique(id)),n=sum(n))
+dfg <- dcast(dfg,year~gear,value.var='N',fill = 0)
+dfg$total <- rowSums(dfg[,-1])
+kable(dfg)
+```
+
+# BIO DATA
+
+```{r bio, message = F, fig.height = 3,fig.width = 4}
+## subset
+bio.caa <- bio[!is.na(bio$agef) & !is.na(bio$length),
+               c('year','trim','nafo','gear','length','agef','sample.id')]
+names(bio.caa)[6] <- 'age'
+
+table(bio.caa$age)
+bio.caa <- bio.caa[bio.caa$age<20,]        # remove crazy ages (42 and 63)
+
+## group regions and gears
+# PERIOD: quarter
+names(bio.caa)[2] <- 'period'
+table(bio.caa$period,useNA = 'always')
+
+# REGION: large scale regions 
+bio.caa$region <- group.region[match(bio.caa$nafo,group.region$nafo),'region']
+bio.caa$nafo <- NULL
+table(bio.caa$region,useNA = 'always')
+
+# GEAR: similar selectivity gears
+bio.caa$gear <- group.gear[match(bio.caa$gear,group.gear$gear.cat),'gear.group']
+table(bio.caa$gear,useNA = 'always')
+
+## make equal length classes
+bio.caa$length <- roundFish(bio.caa$length,5) 
+bio.caa <- bio.caa[bio.caa$length>0,]
+range(bio.caa$length)
+
+save(bio.caa, file =  paste0(dir.rdat, "bio.caa.Rdata"))
+```
+
+## TABLES {.tabset}
+```{r bio tab1, echo=F}
+df <- bio.caa
+df$id <- with(df,paste(sample.id,year,period,region,gear),collapse='.')
+```
+### period
+```{r bio tab2, echo=F}
+dfp <- ddply(df,c('year','period'),summarise,N=length(unique(id)),n=sum(n))
+dfp <- dcast(dfp,year~period,value.var='N',fill = 0)
+dfp$total <- rowSums(dfp[,-1])
+kable(dfp)
+```
+### region
+```{r bio tab3, message = F}
+dfr <- ddply(df,c('year','region'),summarise,N=length(unique(id)),n=sum(n))
+dfr <- dcast(dfr,year~region,value.var='N',fill = 0)
+dfr$total <- rowSums(dfr[,-1])
+kable(dfr)
+```
+### gear
+```{r bio tab4, message = F}
+dfg <- ddply(df,c('year','gear'),summarise,N=length(unique(id)),n=sum(n))
+dfg <- dcast(dfg,year~gear,value.var='N',fill = 0)
+dfg$total <- rowSums(dfg[,-1])
+kable(dfg)
+```
+
+# CATCH DATA
+
+```{r catch.caa, message = F, fig.height = 8,fig.width = 6}
+catch <- catch[,c('year','month','nafo','gear.cat','source','catch')]
+
+## identify period, region and gear
+# 1) PERIOD: quarters
+catch$period <- ceiling(catch$month/3)
+
+# 2) REGION: large scale regions 
+catch$region <- group.region[match(catch$nafo,group.region$nafo),'region']
+
+# 3) GEAR: similar selectivity gears
+catch$gear <- group.gear[match(catch$gear.cat,group.gear$gear.cat),'gear.group']
+
+## total catch by level
+catch.caa <- ddply(catch,c('year','region','period','gear'),summarise,catch=sum(catch,na.rm = T))
+catch.caa <- catch.caa[catch.caa$catch>0,]
+
+save(catch.caa, file =  paste0(dir.rdat, "catch.caa.Rdata"))
+
+# plot
+p.r <- plotCatch(catch.caa,x='year',y='catch',fill='region')
+p.g <- plotCatch(catch.caa,x='year',y='catch',fill='gear')
+p.p <- plotCatch(catch.caa,x='year',y='catch',fill='period')
+grid.arrange(p.r,p.g,p.p)
+```
+
+# CATCH-AT-AGE
+
+```{r caa, message = F}
+caa.allR <- paste0(dir.rdat, "caa.all.Rdata")
+caaR <- paste0(dir.rdat, "caa.Rdata")
+  
+if(!all(file.exists(c(caa.allR,caaR)))){
+    # step 1) get samples
+    lf.caa[,which(names(lf.caa) %in% names(lw.mod)[-c(1:2)])] <- NULL       # remove model details
+    catch.caa <- catch.caa[catch.caa$year %in% unique(lf.caa$year),]        # years for which bio/lf
+    
+    caa.all <- caa.raw(catch=catch.caa,
+                       lf=lf.caa, 
+                       al=bio.caa,
+                       tresh.lf=2,          # min samples for length-frequency
+                       tresh.al=2,          # min samples for age-length key
+                       period.unit='quarter')   # quarterly grouping instead of monthly
+
+    caa.all$X0 <- NULL                       # remove age 0 ?? (total landings somewhat smaller)
+    save(caa.all, file =  caa.allR)
+    
+    # step 2) get actual caa
+    caa <- caa.clean(caa.all,plus=10)
+    save(caa, file =  caaR)     
+}else{ 
+    load(caa.allR)
+    load(caaR)
+}
+```
+
+## CHECK {.tabset}
+### samples
+```{r caa check samples, fig.height = 6,fig.width = 8}
+check <- ddply(caa.all,c('id'),summarise,
+               option.lengthfreq=unique(option.lengthfreq),
+               nsample.lengthfreq=unique(nsample.lengthfreq),
+               nfish.lengthfreq=sum(n.lf),
+               option.agelength=unique(option.agelength),
+               nsample.agelength=unique(nsample.agelength),
+               nfish.agekey=sum(n.agekey))
+check <- melt(check,id='id')
+ggplot(check,aes(x=value))+geom_histogram(bins=30)+facet_wrap(~variable,scale='free')  # region and gear can only rarely be matched
+```
+### total
+```{r caa check total, fig.height = 6,fig.width = 8}
+tot <- ddply(catch.caa,c('year'),summarise,catch=sum(catch))
+ggplot(caa,aes(x=year))+
+  geom_bar(stat='identity',aes(y=caaw,fill=age))+
+  geom_line(data=tot,aes(y=catch))+
+  scale_fill_viridis()
+```
+
+# PLOTS {.tabset}
+
+## CAA
+
+```{r caa plot, message = F, fig.height = 6,fig.width = 16}
+grid.arrange(
+  ggplot(caa,aes(x=year,y=age,size=caan))+geom_point(alpha=0.8)+ scale_size(range = c(1,10)),
+  ggplot(caa,aes(x=year,y=age,size=caaw))+geom_point(alpha=0.8)+ scale_size(range = c(1,10)),
+  ncol=2
+)
+```
+
+## WAA
+
+```{r waa plot, message = F, fig.height = 6,fig.width = 16}
+grid.arrange(
+  ggplot(caa,aes(x=year,y=waa,group=age))+
+    geom_line(aes(color=age))+
+    scale_color_viridis(),
+  ggplot(caa,aes(x=year,y=waa,group=age))+
+    geom_ribbon(aes(ymin=waa-2*waa.sd,ymax=waa+2*waa.sd,fill=age),alpha=0.2)+
+    geom_line(aes(color=age))+
+    scale_color_viridis(),
+  ncol=2
+)
+
+```
