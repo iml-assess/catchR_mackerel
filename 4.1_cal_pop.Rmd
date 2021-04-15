@@ -1,0 +1,300 @@
+---
+title: "Catch-at-Length (gear, region and time specific)"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float:
+      collapsed: FALSE
+    code_folding: show
+    number_sections: TRUE
+---
+  
+Section CAL reflects the length frequencies in the total catches. They are dependent not only on the population's size structure but also gear-type (selectivity), region (availability) and time (growth). To remove the 'gear' and 'region' effect this script looks at length-frequency data from a given gear in each region. Different time-scales are considered to address growth.
+    
+# SET-UP
+```{r  markdown, echo=F}
+library(knitr)
+opts_chunk$set(echo = T, collapse = T, fig.align = "center", fig.width = 9, fig.height = 6)
+options(width = 140)
+```    
+
+## settings
+```{r settings, message = F}
+source('0.0_settings.R')
+library(ggridges)
+library(zoo)
+library(PerformanceAnalytics)
+```
+
+## load all data
+```{r data, message = F}
+# for lf by trimester
+load(paste0(dir.rdat, "lf.caa.Rdata"))                                  # from 3.0_caa
+load(paste0(dir.rdat, "bio.Rdata"))                                     # from 1.0_read
+
+# for lf by month
+load(paste0(dir.rdat, "lf.Rdata"))                                      # from 1.0_read
+group.region <- read.table(paste0(dir.dat,'caa_group_region.txt'),header=T)
+group.gear <- read.table(paste0(dir.dat,'caa_group_gear.txt'),header=T)
+```
+
+# LEVEL SPECIFIC LENGTH-FREQUENCIES
+
+## BY TRIMESTER
+
+### Prepatation
+Which cal level (gear/period/region) has sufficient samples?
+```{r cal prep, message = F}
+# levels considered
+gears <- c('Gillnets','Lines','Seines_Nets_Traps_Weirs')
+regions <- c('eNL','sGSL','SS','wNL')
+period <- 2:4
+
+by <- c('year','gear','region','period')
+
+# subset
+this.lf <- lf.caa[lf.caa$gear %in% gears & 
+                  lf.caa$region %in% regions &
+                  lf.caa$period %in% period & 
+                  lf.caa$year %in% 1976:2019,]
+
+# get cal by just taking the average -> equal weight to all samples!! This is the same as if get.samples would have been used.
+cal <- ddply(this.lf,by,transform,prop=n/sum(n)) 
+cal <- ddply(cal,c(by,'length'),summarise,lf=mean(prop),n=sum(n),N=length(unique(sample.id)))
+cal <- ddply(cal,by,transform,N=max(N))
+
+# cal with only one sample: remove
+cal <- cal[cal$N>1,]
+```
+
+#### CHECK {.tabset}
+##### availability
+```{r cal check avail, fig.height = 4,fig.width = 8}
+ggplot(unique(cal[,c(by,'N')]),aes(x=year,y=interaction(gear,region,period)))+
+  geom_point(aes(size=N,col=N))+
+  scale_color_viridis_c()
+```
+
+### Calculation
+```{r cal calc, message = F}
+# get cal for each region
+cal <- this.lf[(this.lf$region=='sGSL' & this.lf$gear=='Lines' & this.lf$period %in% 3)|    # southern Gulf (gillnets = dome sel + earlier)
+           (this.lf$region=='SS' & this.lf$gear=='Seines_Nets_Traps_Weirs' & this.lf$period==2)| # scotian shelf
+           (this.lf$region=='wNL' & this.lf$gear=='Seines_Nets_Traps_Weirs' & this.lf$period %in% 3:4)| # wNL
+           (this.lf$region=='eNL' & this.lf$gear=='Seines_Nets_Traps_Weirs' & this.lf$period %in% 3:4) # eNL  
+           ,]
+cal[cal$region %in% c('eNL','wNL'),'period'] <- '3-4'
+cal <- cal[cal$length>210,]                                             # remove tiny fish in the occasional sample
+
+# get cal by just taking the average -> equal weight to all samples!! This is the same as if get.samples would have been used.
+cal <- ddply(cal,c(by,'length'),summarise,n=sum(n),N=length(unique(sample.id)))  # For NL periods 3 and 4 are combined!
+cal <- ddply(cal,by,transform,prop=n/sum(n),N=max(N),ntot=sum(n),med=median(rep.int(length,n)))
+
+# cal with only one sample: remove
+cal <- cal[cal$N>1,]
+```
+
+#### PLOTS {.tabset}
+##### cal
+```{r cal plot , fig.height = 12,fig.width = 10}
+ggplot(cal) + 
+  geom_density_ridges(stat = "identity", aes(x = length, y = year, height = prop,group=year,fill=region),alpha=0.6)+
+  geom_segment(aes(x=med,xend=med,y=year,yend=year+1))+
+  geom_text(aes(x=200,y=year,label=N),vjust=-0.1,hjust=0)+
+  facet_grid(.~region)+
+  scale_y_continuous(expand=c(0,0))+
+  theme_ridges()+
+  labs(y='',x='Length (cm)')+
+  scale_fill_viridis_d()
+```
+
+##### corelation
+Exploratory.
+Check of correlation (overall) between median sizes (rough measure).
+Also checked correlation over time (rolling window): uninteresting because insufficient years.
+```{r cal corr overall, fig.height = 6,fig.width = 8}
+df <- as.data.frame.matrix(xtabs(med ~ year + region, unique(cal[,c('year','region','med')])))
+df[df==0] <- NA
+
+chart.Correlation(df, histogram=TRUE, pch=19)
+```
+
+##### lm
+Exploratory.
+Check of correlation (overall) between median sizes (rough measure).
+Also checked correlation over time (rolling window): uninteresting because insufficient years.
+```{r cal lm, fig.height = 4,fig.width = 6}
+df <- unique(cal[,c('year','region','med')])
+df <- dcast(df,year~region,value.var='med')
+
+cross <- expand.grid(a=unique(cal$region),b=unique(cal$region))
+cross <- cross[cross$a!=cross$b,]
+b <- apply(cross,1,function(d){
+  x <- df[,d[1]]
+  y <- df[,d[2]]
+  m <- robustbase::lmrob(formula = y ~ 0+x)
+  c(coef(m),summary(m)$coefficients[,4] )
+})
+out <- cbind(cross,t(b))
+
+pstar <- function(x,bonf=1){
+    lab <- rep('',length(x))
+    lab[x<0.1/bonf] <- '*'
+    lab[x<0.05/bonf] <- '**'
+    lab[x<0.01/bonf] <- '***'
+    lab
+}
+
+out$star <- pstar(out$V2)
+out <- out[!(out$b=='sGSL' & out$a!='sGSL') & # not great code
+           !(out$b=='eNL' & out$a %in% c('wNL')) &
+           !(out$b=='SS' & out$a %in% c('eNL','wNL')) &
+           !(out$b=='wNL' & out$a %in% c('wNL')),]
+
+ggplot(out,aes(x=a,y=b))+
+  geom_tile(aes(fill=x))+
+  geom_text(data=out[out$a!=out$b,],aes(label=round(x,2)))+
+  geom_text(data=out[out$a!=out$b,],aes(label=star),hjust=-1,vjust=-0.2)+
+  scale_fill_gradient2(low = 'darkred', mid = 'white', high = 'darkgreen',midpoint=1)+
+  theme(legend.position = 'none')+
+  scale_x_discrete(expand=c(0,0))+
+  scale_y_discrete(expand=c(0,0))+
+  labs(x='',y='')
+```
+
+
+## BY TRIMESTER (+ correction)
+The above samples freqs still are influenced by day of the year; try and back-calculate to remove the effect. By keeping a split between regions, the only difference between them becomes the zonal difference and gear selectivity.
+
+Thought about removing the effect model-wise but can't see how this would work (freqs ~ several non-linear effects, with missing levels)
+
+### Preparation
+```{r cal back, message = F}
+lf.lf <- lf[!is.na(lf$length),c('year','date','nafo','gear.cat','length','n','sample.id')]
+
+## groupings
+lf.lf$region <- group.region[match(lf.lf$nafo,group.region$nafo),'region']
+lf.lf$nafo <- NULL
+lf.lf$gear <- group.gear[match(lf.lf$gear.cat,group.gear$gear.cat),'gear.group']
+lf.lf$gear.cat <- NULL
+
+## Append length-frequencies from carbio
+lf.bio <- bio[!is.na(bio$length) & bio$random==TRUE,c('year','date','nafo','gear','length','sample.id')]
+lf.bio$sample.id <- -lf.bio$sample.id   # negative numbers for these samples for easy tracking
+lf.bio$region <- group.region[match(lf.bio$nafo,group.region$nafo),'region']
+lf.bio$nafo <- NULL
+lf.bio$gear <- group.gear[match(lf.bio$gear,group.gear$gear.cat),'gear.group']
+lf.bio <- ddply(lf.bio,c('year','date','region','gear','length','sample.id'),summarise,n=length(year)) # get freqs
+
+lf.lf <- rbind(lf.lf,lf.bio)
+
+## make equal length classes (consistency)
+lf.lf$length <-roundFish(lf.lf$length,5) 
+
+## select one gear per region (because can't adjust for varying selectivities)
+lf.lf <- lf.lf[(lf.lf$region=='sGSL' & lf.lf$gear=='Lines')|    # southern Gulf (gillnets = dome sel + earlier)
+           (lf.lf$region=='SS' & lf.lf$gear=='Seines_Nets_Traps_Weirs')| # scotian shelf
+           (lf.lf$region=='wNL' & lf.lf$gear=='Seines_Nets_Traps_Weirs')| # wNL
+           (lf.lf$region=='eNL' & lf.lf$gear=='Seines_Nets_Traps_Weirs') # eNL  
+           ,]
+lf.lf <- lf.lf[lf.lf$length>210,]                                             # remove tiny fish in the occasional sample
+
+## correct length for date
+# 1) get age-length data
+al.mod <- bio[!is.na(bio$year) & !is.na(bio$length) & !is.na(bio$agef),c('year','doy','length','agef')]
+al.mod$age <- with(al.mod,ifelse(doy<172,agef-(172-doy)/365,agef+(doy-172)/365)) # 172 = 21st of July spawning
+al.mod$cohort <- with(al.mod,year-agef)
+
+#2) clean age-length data 
+al.mod <- al.mod[al.mod$agef<18,]
+al.mod <- ddply(al.mod,c('agef'),transform,outlier=outlier(length,coef=3)) # identify overall extremes (see caa)
+table(al.mod$outlier)
+al.mod <- al.mod[al.mod$outlier==FALSE,]
+al.mod <- al.mod[!(al.mod$agef==0 &al.mod$length>275),] # problem with convergence
+
+p <- ggplot(al.mod,aes(x=age,y=length))+
+  geom_point()+
+  facet_wrap(~cohort)
+
+# 3) fit model by cohort (brute forece inits till it fits)
+library(FSA)
+vb <- length~Linf*(1-exp(-K*(age-t0)))
+inits <- ddply(al.mod[al.mod$cohort %in% 1973:2014,],c('cohort'),function(x)unlist(FSA::vbStarts(length~age,data=x)))
+mods <- lapply(1973:2014,function(x){
+  i <- 1
+  f <- NULL
+  while(i < nrow(inits)&class(f)!='nls'){
+    ini <- inits[i,-1]
+    f <- try(nls(vb,data=al.mod[al.mod$cohort==x,],start=as.list(ini)), silent=TRUE)
+    i <- i+1
+  }
+  return(f)
+})
+coefs <- ldply(mods,coef)
+
+```
+
+### Calculation
+Did not do this because realized not such a good idea.
+
+* result will depend on the type of growth curve used (bertalanffy vs a seasonal one like Somers). What to use?
+* growth differs significantly between cohorts yet I cannot apply the correct cohort model (length is insufficient to guess the cohort)
+
+Any back-calculation with thus be overly simple and dependent on the assumptions (e.g., using one overall Von Bertalanffy curve would be necessary). Is a half-baked attempt worth it? Note that size distributions by region will never be fully comparable anyway, given that the southern gulf is dominated by a different gear type (selectivity) and that different availability of fish in the regions will induce differences as well (NL presumably having proportionally more larger fish). Because we have CAA by region, focusing on size here seems redundant.
+
+## BY MONTH
+### Calculation
+```{r cal month calc month, message = F}
+# get cal for each region
+lf.month <- lf[,c('year','month','nafo','gear.cat','length','n','sample.id')]
+
+lf.month$region <- group.region[match(lf.month$nafo,group.region$nafo),'region']
+lf.month$gear <- group.gear[match(lf.month$gear.cat,group.gear$gear.cat),'gear.group']
+lf.month$length <-roundFish(lf.month$length,5)  
+
+lf.month <- lf.month[(lf.month$region=='sGSL' & lf.month$gear=='Lines')|    # sGSL
+           (lf.month$region=='SS' & lf.month$gear=='Seines_Nets_Traps_Weirs')| # SS
+           (lf.month$region=='wNL' & lf.month$gear=='Seines_Nets_Traps_Weirs')| # wNL
+           (lf.month$region=='eNL' & lf.month$gear=='Seines_Nets_Traps_Weirs') # eNL  
+           ,]
+
+this.lf <- ddply(lf.month,c('year','month','region','length'),summarise,n=sum(n),N=length(unique(sample.id)))
+this.lf <- ddply(this.lf,c('year','month','region'),transform,prop=n/sum(n),N=max(N),ntot=sum(n),med=median(rep.int(length,n)))
+```
+
+#### PLOTS {.tabset}
+```{r cal month plot prep , fig.height = 10,fig.width = 12}
+regions <- unique(this.lf$region)
+ps <- lapply(regions,function(x)ggplot(this.lf[this.lf$region==x,]) + 
+    geom_density_ridges(stat = "identity", aes(x = length, y = year, height = prop,group=year,fill=month),alpha=0.6)+
+    geom_segment(aes(x=med,xend=med,y=year,yend=year+1))+
+    geom_text(aes(x=200,y=year,label=N),vjust=-0.1,hjust=0)+
+    facet_grid(.~month)+
+    scale_y_continuous(expand=c(0,0))+
+    theme_ridges()+theme(legend.position='none')+
+    labs(y='',x='Length (cm)')+
+    scale_fill_viridis_c())
+names(ps) <- regions
+```
+##### SS
+```{r cal month SS, fig.height = 10,fig.width = 12}
+ps['SS']
+```
+
+##### sGSL
+```{r cal month sGSL, fig.height = 10,fig.width = 12}
+ps['sGSL']
+```
+
+##### wNL
+```{r cal month wNL, fig.height = 10,fig.width = 12}
+ps['wNL']
+```
+
+##### eNL
+```{r cal month eNL, fig.height = 8,fig.width = 10}
+ps['eNL']
+```
+

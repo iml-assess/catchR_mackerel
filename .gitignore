@@ -6,5 +6,6 @@ data/ziff/
 data/bio/
 data/nafo/
 Rdata/
-_site/data/
-_site/Rdata/
+docs/data/
+docs/Rdata/
+docs/img/

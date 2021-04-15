@@ -16,7 +16,7 @@ output:
 ```{r markdown, echo=F}
 library(knitr)
 opts_chunk$set(echo = T, collapse = T, fig.align = "center", fig.width = 9, fig.height = 6)
-options(width = 120)
+options(width = 140)
 ```    
 
 ```{r settings, message = F}
@@ -28,10 +28,10 @@ source('0.0_settings.R')
 
 ```{r ziff, message = F}
 ziffR <- paste0(dir.rdat, "ziff.Rdata")
-sp_code <- find.speciescode(my.species);sp_code[,c(1:2)]
+sp_code <- find.species(my.species,'ziff');sp_code
 
 if(!file.exists(ziffR)){
-    ziff <- read.ziff(speciescode=sp_code[,1],path=dir.ziff,year=my.year)
+    ziff <- read.ziff(sp_code,path=dir.ziff,year=my.year,language='en')
     
     # Species included:
     with(ziff, table(species,year))
@@ -59,6 +59,13 @@ kable(na)
 ```{r ziff zeros}
 with(ziff[!is.na(ziff$catch) & ziff$catch==0,],table(year))
 ```
+#### Jan-1
+Check that there is no abnormal quantity of landings on January first (possibly NA)
+```{r ZIFF_jan1}
+ggplot(ziff,aes(x=lubridate::yday(capt.date)))+geom_histogram(binwidth = 1)+
+    scale_x_continuous(expand=c(0,0))+
+    scale_y_continuous(expand=c(0,0))
+```
 
 ## NAFO
 
@@ -68,15 +75,9 @@ nafoBR <- paste0(dir.rdat, "nafoB.Rdata")
 
 if(!all(file.exists(c(nafoAR,nafoBR)))){
     ### NAFO database A (annual) ---------------------------------
-    nafoA <- read.nafoA(paste0(dir.nafo,'statlandA.csv')) 
-    
-    # select species
-    nafoA <- nafoA[grepl('Atlantic mackerel',nafoA$species.name,ignore.case = TRUE),]
-    table(nafoA$species.name)
-    
-    # select years
-    nafoA <- nafoA[nafoA$year %in% my.year,]
-    
+    sp_code <- find.species(my.species,'nafoA');sp_code
+    nafoA <- read.nafoA(paste0(dir.nafo,'statlandA.csv'),species=sp_code[1], year=my.year) 
+
     # Canadian caught mackerel outside of my.nafo
     with(nafoA[!grepl(paste0(my.nafo, collapse = "|"),nafoA$nafo)&
                  grepl('canada',nafoA$country,ignore.case = TRUE),] ,table(year,nafo))
@@ -88,15 +89,9 @@ if(!all(file.exists(c(nafoAR,nafoBR)))){
     save(nafoA, file = nafoAR)
     
     ### NAFO data base B (monthly) ---------------------------------
-    nafoB <- read.nafoB(path=dir.nafo,year=my.year,overwrite=FALSE)     
-    
-    # select species
-    nafoB <- nafoB[nafoB$species.name==toupper(my.species),]
-    table(nafoB$species.name)
-    
-    # select year
-    nafoB <- nafoB[nafoB$year %in% my.year,]
-    
+    sp_code <- find.species(my.species,'nafoB');sp_code
+    nafoB <- read.nafoB(path=dir.nafo,species=sp_code[1],year=my.year,overwrite=FALSE)     
+
     # Canadian caught mackerel outside of my.nafo
     with(nafoB[!grepl(paste0(my.nafo, collapse = "|"),nafoB$nafo)&
                  grepl('canada',nafoB$country,ignore.case = TRUE),] ,table(year,nafo))
@@ -118,7 +113,7 @@ if(!all(file.exists(c(nafoAR,nafoBR)))){
 ```
 ### CHECK {.tabset}
 #### compare
-```{r nafo comp}
+```{r NAFO_comparison}
 ggplot()+
     geom_bar(data=nafoA,aes(x=year,y=catch),stat='identity',alpha=0.2,fill='blue')+
     geom_bar(data=nafoB,aes(x=year,y=catch),stat='identity',alpha=0.2,fill='red')+
@@ -128,7 +123,7 @@ ggplot()+
 
 ## CATCH = NAFO + ZIFF
 
-```{r nafoziff, message = F}
+```{r CATCH, message = F}
 ## bind both
 ziff$source <-'ziff'
 ziff$catch <- ziff$catch/1000            # kg to tonnes
@@ -138,7 +133,9 @@ ziff$prov <- ifelse(ziff$prov.land=='Unknown',as.character(ziff$prov.home),as.ch
 nafoB$source <- 'nafo'                   # work with detailed B base
 
 sel <- c('year','month','nafo','gear.cat','source','catch','country','prov')
-catch <- rbind(ziff[ziff$year>=1995,sel],nafoB[nafoB$year<1995,sel])       # ziff from 1995 onwards, nafoB before
+catch <- rbind(ziff[ziff$year>=1995,sel],        # ziff from 1995 onwards
+               nafoB[nafoB$year<1995,sel],       # nafoB before
+               nafoB[nafoB$year>=1995 & nafoB$country!='Canada',sel]) # foreign post 1994
 
 save(catch, file = paste0(dir.rdat, "catch.Rdata"))
 
@@ -150,30 +147,46 @@ plotCatch(catch,x='year',y='catch')
 ```{r lf, message = F}
 lfR <- paste0(dir.rdat, "lf.Rdata")
 if(!file.exists(lfR)){
-    lf <- read.lf(file=paste0(dir.bio,'lf.dat'))
-    lf <- lf[lf$year %in% my.year,]
-    
-    # correct weight if necessary  (not currently the case for mackerel)
-    st <- table(lf$state.id);st
-      #lf$weight.land <- correct.weight(lf$weight.land,lf$state.id,species=my.species)
-      #lf$weight.sample <- correct.weight(lf$weight.sample,lf$state.id,species=my.species)
+    lf <- read.lf(file=paste0(dir.bio,'lf.dat'), year=my.year)
+
+    # correct weight for state (conversion factors in catchR/data_raw/lf_fishshape.csv)
+    lf$weight.land <- correct.weight(lf$weight.land,lf$state.id,species=my.species)
+    lf$weight.sample <- correct.weight(lf$weight.sample,lf$state.id,species=my.species)
     
     save(lf, file = lfR)
 }else{
     load(lfR)
 }
-
 ```
 
 # BIO
-
 ```{r bio, message = F}
 bioR <- paste0(dir.rdat, "bio.Rdata")
+check.distribution <- FALSE
+
 if(!file.exists(bioR)){
-    bio <- read.bio(file=paste0(dir.bio,'carbio.dat'),species=my.species)
-    bio <- bio[bio$year %in% my.year,]
+    bio <- read.bio(file=paste0(dir.bio,'carbio.dat'),year=my.year,species=my.species)
     
+    # add static ids if missing (here by month,day,nafo,gear), for mackerel always when no length is available
+    v <- bio[is.na(bio$sample.id),]
+    idchar <- do.call(paste0,list(month(v$date),day(v$date),v$nafo,v$gear))
+    bio[is.na(bio$sample.id),'sample.id'] <- get.id(idchar) #crazy high numbers help indicate difference
+
+    # add info on whether samples were taken randomly or not (see readme.txt)
+    random <- read.csv2(file=paste0(dir.bio,'carbio_random.csv'),sep=',')   # update after new bio
+    random$date <- as.Date(random$date,format = '%d-%m-%y')
+    bio <- merge(bio,random,all.x = T)
+    
+    # correct mistakes
+    bio[bio$nafo=='4WE','nafo'] <- '4W'
+    
+    # save
     save(bio, file = bioR)
+    
+    # check distributions (random samples will be appended to lf database)
+    if(check.distribution){
+      source('1.0_read_bio.R')
+    }
 }else{
     load(bioR)
 }

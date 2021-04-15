@@ -15,7 +15,7 @@ output:
 ```{r markdown, echo=F}
 library(knitr)
 opts_chunk$set(echo = T, collapse = T, fig.align = "center", fig.width = 9, fig.height = 6)
-options(width = 120)
+options(width = 140)
 ```    
 
 ## settings
@@ -38,7 +38,7 @@ catch.Andrew <- read.ices(url(paste0(repo,'data/2018/ct.dat',"?raw=true")))
 ## Binding
 
 ```{r wrangle, message = F}
-catch.new <- ddply(catch,c('year'),summarise,catch=sum(catch),source='New')
+catch.new <- ddply(catch,c('year'),summarise,catch=sum(catch,na.rm = T),source='New')
 catch.Francois <- data.frame(year=as.numeric(row.names(catch.Francois)),
                              catch=catch.Francois[,1],
                              source='Francois (2014)')
@@ -55,7 +55,7 @@ catch.comp$source <- factor(catch.comp$source,levels=c('New','Andrew (2018)','Th
 
 # PLOT
 
-```{r plot catch comp, echo=F}
+```{r catch_total_comparison, echo=F}
 ggplot(catch.comp[!is.na(catch.comp$catch),],aes(x=year,y=catch,color=source))+geom_line(size=1)+scale_color_viridis_d()
 ```
 

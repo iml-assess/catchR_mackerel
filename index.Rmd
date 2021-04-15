@@ -5,7 +5,14 @@ output:
         toc: false
 ---
 
-!!! Still working on it!!!
+Analyses of mackerel catch.
 
-So far mainly intended to try calculating various mackerel stuff on a regional level.
+The following structure is used;
+
+1. Data: involves reading in all relevant data (ziff, nafo, commercial length-frequencies and sub-sample for biological analysis).
+2. Landings: overview of landing data (+comparison of totals with previous resdocs for verification).
+3. CAA: catch-at-age calculations for total landings and by region (+comparison with previous resdocs for verification),
+4. CAL: catch-at-length calculations for total landings and by factor influencing this to try and assess population level changes.
+
+
 

@@ -15,7 +15,7 @@ output:
 ```{r markdwon, echo=F}
 library(knitr)
 opts_chunk$set(echo = T, collapse = T, fig.align = "center", fig.width = 9, fig.height = 6)
-options(width = 120)
+options(width = 140)
 ```    
 
 ## settings

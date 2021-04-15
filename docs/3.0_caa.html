@@ -1,0 +1,4304 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+<meta name="date" content="2021-03-17" />
+
+<title>Catch-at-age</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Mackerel</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="0.0_settings.html">
+    <span class="fas fa-cogs"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="1.0_read.html">Data</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Landings
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="2.0_landings.html">Overview</a>
+    </li>
+    <li>
+      <a href="2.1_landings_comparison.html">Comparison</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    CAA
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="3.0_caa.html">Calculation</a>
+    </li>
+    <li>
+      <a href="3.1_caa_comparison.html">Comparison</a>
+    </li>
+    <li>
+      <a href="3.2_caa_region.html">Regional</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    CAL
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="4.0_cal.html">Overview</a>
+    </li>
+    <li>
+      <a href="4.1_cal_pop.html">Gear and Region specific</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Catch-at-age</h1>
+<h4 class="date">2021-03-17</h4>
+
+</div>
+
+
+<div id="set-up" class="section level1">
+<h1><span class="header-section-number">1</span> SET-UP</h1>
+<div id="settings" class="section level2">
+<h2><span class="header-section-number">1.1</span> settings</h2>
+<pre class="r"><code>source(&#39;0.0_settings.R&#39;)</code></pre>
+</div>
+<div id="load-all-data" class="section level2">
+<h2><span class="header-section-number">1.2</span> load all data</h2>
+<pre class="r"><code>load(paste0(dir.rdat, &quot;catch.Rdata&quot;))                                # from 1.0 read
+load(paste0(dir.rdat, &quot;bio.Rdata&quot;))                                  # from 1.0 read
+load(paste0(dir.rdat, &quot;lf.Rdata&quot;))                                   # from 1.0 read
+group.region &lt;- read.table(paste0(dir.dat,&#39;caa_group_region.txt&#39;),header=T)
+group.gear &lt;- read.table(paste0(dir.dat,&#39;caa_group_gear.txt&#39;),header=T)</code></pre>
+</div>
+</div>
+<div id="length-weight-relationships" class="section level1">
+<h1><span class="header-section-number">2</span> LENGTH-WEIGHT RELATIONSHIPS</h1>
+<p>Sample weights are often missing and apparently are not precise. Therefore, the weight of a sample is estimated based on the length of the individuals and their number sampled. This section fits length-weight relationships for all years and periods. Bio samples are used (‘carbio’).</p>
+<pre class="r"><code>
+## subset
+lw &lt;- bio[!is.na(bio$length) &amp; !is.na(bio$weight),c(&#39;year&#39;,&#39;trim&#39;,&#39;length&#39;,&#39;weight&#39;)]
+lw$logw &lt;- log(lw$weight)           
+lw$logl &lt;- log(lw$length)          
+
+## remove extremes
+# ggplot(lw,aes(x=logl,y=logw))+geom_point()
+lw &lt;- lw[lw$logw&gt;0 &amp; lw$logl&gt;3,]                         # minimal weight and length 
+
+## relationships by year and period (quarter) (!robuust regression instead of removing subjectively some points each year!)
+lw.modR &lt;- paste0(dir.rdat, &quot;lw.mod.Rdata&quot;)
+
+if(!file.exists(lw.modR)){
+    lw.mod &lt;- with(lw,fit.lw(logl,logw,year,trim,tresh=300,period.unit=&#39;quarter&#39;))
+    save(lw.mod, file =  lw.modR)
+}else{ 
+    load(lw.modR)
+}</code></pre>
+<div id="check" class="section level2 tabset">
+<h2><span class="header-section-number">2.1</span> CHECK</h2>
+<div id="prediction" class="section level3">
+<h3><span class="header-section-number">2.1.1</span> Prediction</h3>
+<pre class="r"><code>expand.grid.df &lt;- function(...) type.convert(Reduce(function(...) merge(..., by=NULL), list(...)))
+check &lt;- expand.grid.df(lw.mod,data.frame(length=0:ceiling(max(lf$length))))
+check$weight &lt;- with(check,exp(intercept+slope*log(length))*cf)
+ggplot(check,aes(x=length,y=weight,col=year,group=year))+
+    geom_line(size=0.5)+
+    facet_wrap(~period)+
+    scale_y_continuous(limits=c(0,max(lw$weight)))+
+    scale_color_viridis_c()+
+    labs(title=&#39;Predicted length-weight relationships&#39;)
+## Warning: Removed 6443 row(s) containing missing values (geom_path).</code></pre>
+<p><img src="3.0_caa_files/figure-html/lw_fit-1.png" width="864" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+</div>
+<div id="length-frequency-data" class="section level1">
+<h1><span class="header-section-number">3</span> LENGTH-FREQUENCY DATA</h1>
+<pre class="r"><code>lw.caaR &lt;- paste0(dir.rdat, &quot;lw.caa.Rdata&quot;)
+if(!file.exists(lw.caaR)){
+    ## subset
+    lf.caa &lt;- lf[!is.na(lf$length),c(&#39;year&#39;,&#39;trim&#39;,&#39;nafo&#39;,&#39;gear.cat&#39;,&#39;length&#39;,&#39;n&#39;,&#39;sample.id&#39;)]
+    
+    ## group regions and gears
+    # PERIOD: quarter
+    names(lf.caa)[2] &lt;- &#39;period&#39;
+    
+    # REGION: large scale regions 
+    lf.caa$region &lt;- group.region[match(lf.caa$nafo,group.region$nafo),&#39;region&#39;]
+    lf.caa$nafo &lt;- NULL
+    
+    # GEAR: similar selectivity gears
+    lf.caa$gear &lt;- group.gear[match(lf.caa$gear.cat,group.gear$gear.cat),&#39;gear.group&#39;]
+    lf.caa$gear.cat &lt;- NULL
+    
+    ## Append length-frequencies from carbio
+    lf.bio &lt;- bio[!is.na(bio$length) &amp; bio$random==TRUE,c(&#39;year&#39;,&#39;trim&#39;,&#39;nafo&#39;,&#39;gear&#39;,&#39;length&#39;,&#39;sample.id&#39;)]
+    lf.bio$sample.id &lt;- -lf.bio$sample.id   # negative numbers for these samples for easy tracking
+    
+    # group regions and gears
+    names(lf.bio)[2] &lt;- &#39;period&#39;
+    lf.bio$region &lt;- group.region[match(lf.bio$nafo,group.region$nafo),&#39;region&#39;]
+    lf.bio$nafo &lt;- NULL
+    lf.bio$gear &lt;- group.gear[match(lf.bio$gear,group.gear$gear.cat),&#39;gear.group&#39;]
+    
+    table(lf.bio$period,useNA = &#39;always&#39;)
+    table(lf.bio$region,useNA = &#39;always&#39;)
+    table(lf.bio$gear,useNA = &#39;always&#39;)
+                    
+    lf.bio &lt;- ddply(lf.bio,c(&#39;year&#39;,&#39;period&#39;,&#39;region&#39;,&#39;gear&#39;,&#39;length&#39;,&#39;sample.id&#39;),summarise,n=length(year))
+    
+    lf.caa &lt;- rbind(lf.caa,lf.bio)
+    
+    ## convert lengths to sample weights (kg)
+    lf.caa &lt;- merge(lf.caa,lw.mod,all.x=T)
+    lf.caa$weight.unit &lt;- with(lf.caa,exp(intercept+slope*log(length))*cf/1000)
+    
+    ## make equal length classes
+    table(lf$length.bin)
+    lf.caa$length &lt;-roundFish(lf.caa$length,5) 
+    
+    ## save
+    save(lf.caa, file =  paste0(dir.rdat, &quot;lf.caa.Rdata&quot;))
+}else{ 
+    load(lw.caaR)
+}</code></pre>
+<div id="check-1" class="section level2 tabset">
+<h2><span class="header-section-number">3.1</span> CHECK</h2>
+<div id="model-samples" class="section level3">
+<h3><span class="header-section-number">3.1.1</span> model samples</h3>
+<pre class="r"><code>check &lt;- unique(lf.caa[,c(&#39;year&#39;,&#39;period&#39;,&#39;option&#39;)])
+kable(with(check,table(option,period)))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">1</th>
+<th align="right">2</th>
+<th align="right">3</th>
+<th align="right">4</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">lw including neighbouring periods</td>
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="right">0</td>
+<td align="right">12</td>
+</tr>
+<tr class="even">
+<td align="left">lw of year and period</td>
+<td align="right">0</td>
+<td align="right">42</td>
+<td align="right">47</td>
+<td align="right">32</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="predictions" class="section level3">
+<h3><span class="header-section-number">3.1.2</span> predictions</h3>
+<pre class="r"><code>grid.arrange(
+  ggplot(lf.caa,aes(x=weight.unit))+geom_histogram(binwidth = 0.1)+labs(title=&#39;Predicted unit weights&#39;,x=&#39;Weight (kg)&#39;),
+  ggplot(lf.caa,aes(x=weight.unit*n))+geom_histogram(binwidth = 1)+labs(title=&#39;Predicted sample weights&#39;,x=&#39;Weight (kg)&#39;),
+  ncol=2
+)</code></pre>
+<p><img src="3.0_caa_files/figure-html/lw_predictions-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="tables" class="section level2 tabset">
+<h2><span class="header-section-number">3.2</span> TABLES</h2>
+<div id="overview" class="section level3">
+<h3><span class="header-section-number">3.2.1</span> overview</h3>
+<pre class="r"><code>df &lt;- lf.caa
+df$id &lt;- with(df,paste(sample.id,year,period,region,gear),collapse=&#39;.&#39;)
+lf.overall &lt;- ddply(df,c(&#39;year&#39;),summarise,N=length(unique(id)),n=length(id),mean=round(mean(table(id)),0),min=min(table(id)),max=max(table(id)))
+kable(lf.overall)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">year</th>
+<th align="right">N</th>
+<th align="right">n</th>
+<th align="right">mean</th>
+<th align="right">min</th>
+<th align="right">max</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1973</td>
+<td align="right">7</td>
+<td align="right">365</td>
+<td align="right">52</td>
+<td align="right">44</td>
+<td align="right">67</td>
+</tr>
+<tr class="even">
+<td align="right">1974</td>
+<td align="right">2</td>
+<td align="right">76</td>
+<td align="right">38</td>
+<td align="right">33</td>
+<td align="right">43</td>
+</tr>
+<tr class="odd">
+<td align="right">1976</td>
+<td align="right">101</td>
+<td align="right">1971</td>
+<td align="right">20</td>
+<td align="right">11</td>
+<td align="right">32</td>
+</tr>
+<tr class="even">
+<td align="right">1977</td>
+<td align="right">101</td>
+<td align="right">2036</td>
+<td align="right">20</td>
+<td align="right">7</td>
+<td align="right">60</td>
+</tr>
+<tr class="odd">
+<td align="right">1978</td>
+<td align="right">103</td>
+<td align="right">1632</td>
+<td align="right">16</td>
+<td align="right">8</td>
+<td align="right">59</td>
+</tr>
+<tr class="even">
+<td align="right">1979</td>
+<td align="right">125</td>
+<td align="right">1946</td>
+<td align="right">16</td>
+<td align="right">7</td>
+<td align="right">42</td>
+</tr>
+<tr class="odd">
+<td align="right">1980</td>
+<td align="right">102</td>
+<td align="right">1615</td>
+<td align="right">16</td>
+<td align="right">9</td>
+<td align="right">23</td>
+</tr>
+<tr class="even">
+<td align="right">1981</td>
+<td align="right">78</td>
+<td align="right">1136</td>
+<td align="right">15</td>
+<td align="right">7</td>
+<td align="right">28</td>
+</tr>
+<tr class="odd">
+<td align="right">1982</td>
+<td align="right">81</td>
+<td align="right">1285</td>
+<td align="right">16</td>
+<td align="right">10</td>
+<td align="right">31</td>
+</tr>
+<tr class="even">
+<td align="right">1983</td>
+<td align="right">69</td>
+<td align="right">1621</td>
+<td align="right">23</td>
+<td align="right">7</td>
+<td align="right">43</td>
+</tr>
+<tr class="odd">
+<td align="right">1984</td>
+<td align="right">113</td>
+<td align="right">3284</td>
+<td align="right">29</td>
+<td align="right">9</td>
+<td align="right">88</td>
+</tr>
+<tr class="even">
+<td align="right">1985</td>
+<td align="right">93</td>
+<td align="right">2388</td>
+<td align="right">26</td>
+<td align="right">10</td>
+<td align="right">52</td>
+</tr>
+<tr class="odd">
+<td align="right">1986</td>
+<td align="right">75</td>
+<td align="right">2124</td>
+<td align="right">28</td>
+<td align="right">12</td>
+<td align="right">65</td>
+</tr>
+<tr class="even">
+<td align="right">1987</td>
+<td align="right">113</td>
+<td align="right">2133</td>
+<td align="right">19</td>
+<td align="right">5</td>
+<td align="right">55</td>
+</tr>
+<tr class="odd">
+<td align="right">1988</td>
+<td align="right">137</td>
+<td align="right">2635</td>
+<td align="right">19</td>
+<td align="right">10</td>
+<td align="right">42</td>
+</tr>
+<tr class="even">
+<td align="right">1989</td>
+<td align="right">117</td>
+<td align="right">2652</td>
+<td align="right">23</td>
+<td align="right">11</td>
+<td align="right">37</td>
+</tr>
+<tr class="odd">
+<td align="right">1990</td>
+<td align="right">49</td>
+<td align="right">1221</td>
+<td align="right">25</td>
+<td align="right">12</td>
+<td align="right">40</td>
+</tr>
+<tr class="even">
+<td align="right">1991</td>
+<td align="right">63</td>
+<td align="right">1374</td>
+<td align="right">22</td>
+<td align="right">14</td>
+<td align="right">42</td>
+</tr>
+<tr class="odd">
+<td align="right">1992</td>
+<td align="right">57</td>
+<td align="right">1397</td>
+<td align="right">25</td>
+<td align="right">16</td>
+<td align="right">38</td>
+</tr>
+<tr class="even">
+<td align="right">1993</td>
+<td align="right">62</td>
+<td align="right">1409</td>
+<td align="right">23</td>
+<td align="right">14</td>
+<td align="right">36</td>
+</tr>
+<tr class="odd">
+<td align="right">1994</td>
+<td align="right">54</td>
+<td align="right">1182</td>
+<td align="right">22</td>
+<td align="right">13</td>
+<td align="right">40</td>
+</tr>
+<tr class="even">
+<td align="right">1995</td>
+<td align="right">70</td>
+<td align="right">1481</td>
+<td align="right">21</td>
+<td align="right">11</td>
+<td align="right">38</td>
+</tr>
+<tr class="odd">
+<td align="right">1996</td>
+<td align="right">51</td>
+<td align="right">1205</td>
+<td align="right">24</td>
+<td align="right">12</td>
+<td align="right">40</td>
+</tr>
+<tr class="even">
+<td align="right">1997</td>
+<td align="right">49</td>
+<td align="right">1195</td>
+<td align="right">24</td>
+<td align="right">16</td>
+<td align="right">44</td>
+</tr>
+<tr class="odd">
+<td align="right">1998</td>
+<td align="right">54</td>
+<td align="right">1163</td>
+<td align="right">22</td>
+<td align="right">14</td>
+<td align="right">35</td>
+</tr>
+<tr class="even">
+<td align="right">1999</td>
+<td align="right">57</td>
+<td align="right">1309</td>
+<td align="right">23</td>
+<td align="right">16</td>
+<td align="right">43</td>
+</tr>
+<tr class="odd">
+<td align="right">2000</td>
+<td align="right">56</td>
+<td align="right">1224</td>
+<td align="right">22</td>
+<td align="right">11</td>
+<td align="right">35</td>
+</tr>
+<tr class="even">
+<td align="right">2001</td>
+<td align="right">78</td>
+<td align="right">1734</td>
+<td align="right">22</td>
+<td align="right">12</td>
+<td align="right">50</td>
+</tr>
+<tr class="odd">
+<td align="right">2002</td>
+<td align="right">78</td>
+<td align="right">1739</td>
+<td align="right">22</td>
+<td align="right">14</td>
+<td align="right">37</td>
+</tr>
+<tr class="even">
+<td align="right">2003</td>
+<td align="right">81</td>
+<td align="right">1510</td>
+<td align="right">19</td>
+<td align="right">10</td>
+<td align="right">28</td>
+</tr>
+<tr class="odd">
+<td align="right">2004</td>
+<td align="right">96</td>
+<td align="right">2195</td>
+<td align="right">23</td>
+<td align="right">9</td>
+<td align="right">39</td>
+</tr>
+<tr class="even">
+<td align="right">2005</td>
+<td align="right">118</td>
+<td align="right">2713</td>
+<td align="right">23</td>
+<td align="right">10</td>
+<td align="right">45</td>
+</tr>
+<tr class="odd">
+<td align="right">2006</td>
+<td align="right">88</td>
+<td align="right">1803</td>
+<td align="right">20</td>
+<td align="right">12</td>
+<td align="right">31</td>
+</tr>
+<tr class="even">
+<td align="right">2007</td>
+<td align="right">103</td>
+<td align="right">2099</td>
+<td align="right">20</td>
+<td align="right">9</td>
+<td align="right">43</td>
+</tr>
+<tr class="odd">
+<td align="right">2008</td>
+<td align="right">70</td>
+<td align="right">1327</td>
+<td align="right">19</td>
+<td align="right">10</td>
+<td align="right">34</td>
+</tr>
+<tr class="even">
+<td align="right">2009</td>
+<td align="right">91</td>
+<td align="right">1947</td>
+<td align="right">21</td>
+<td align="right">10</td>
+<td align="right">46</td>
+</tr>
+<tr class="odd">
+<td align="right">2010</td>
+<td align="right">136</td>
+<td align="right">2933</td>
+<td align="right">22</td>
+<td align="right">8</td>
+<td align="right">40</td>
+</tr>
+<tr class="even">
+<td align="right">2011</td>
+<td align="right">69</td>
+<td align="right">1415</td>
+<td align="right">21</td>
+<td align="right">8</td>
+<td align="right">41</td>
+</tr>
+<tr class="odd">
+<td align="right">2012</td>
+<td align="right">60</td>
+<td align="right">1261</td>
+<td align="right">21</td>
+<td align="right">12</td>
+<td align="right">49</td>
+</tr>
+<tr class="even">
+<td align="right">2013</td>
+<td align="right">36</td>
+<td align="right">602</td>
+<td align="right">17</td>
+<td align="right">13</td>
+<td align="right">21</td>
+</tr>
+<tr class="odd">
+<td align="right">2014</td>
+<td align="right">46</td>
+<td align="right">786</td>
+<td align="right">17</td>
+<td align="right">11</td>
+<td align="right">25</td>
+</tr>
+<tr class="even">
+<td align="right">2015</td>
+<td align="right">43</td>
+<td align="right">748</td>
+<td align="right">17</td>
+<td align="right">11</td>
+<td align="right">31</td>
+</tr>
+<tr class="odd">
+<td align="right">2016</td>
+<td align="right">63</td>
+<td align="right">1265</td>
+<td align="right">20</td>
+<td align="right">7</td>
+<td align="right">33</td>
+</tr>
+<tr class="even">
+<td align="right">2017</td>
+<td align="right">64</td>
+<td align="right">1231</td>
+<td align="right">19</td>
+<td align="right">10</td>
+<td align="right">29</td>
+</tr>
+<tr class="odd">
+<td align="right">2018</td>
+<td align="right">75</td>
+<td align="right">1924</td>
+<td align="right">26</td>
+<td align="right">11</td>
+<td align="right">64</td>
+</tr>
+<tr class="even">
+<td align="right">2019</td>
+<td align="right">72</td>
+<td align="right">1608</td>
+<td align="right">22</td>
+<td align="right">12</td>
+<td align="right">55</td>
+</tr>
+<tr class="odd">
+<td align="right">2020</td>
+<td align="right">54</td>
+<td align="right">1167</td>
+<td align="right">22</td>
+<td align="right">12</td>
+<td align="right">48</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="period" class="section level3">
+<h3><span class="header-section-number">3.2.2</span> period</h3>
+<pre class="r"><code>dfp &lt;- ddply(df,c(&#39;year&#39;,&#39;period&#39;),summarise,N=length(unique(id)),n=sum(n))
+dfp &lt;- dcast(dfp,year~period,value.var=&#39;N&#39;,fill = 0)
+dfp$total &lt;- rowSums(dfp[,-1])
+kable(dfp)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">year</th>
+<th align="right">1</th>
+<th align="right">2</th>
+<th align="right">3</th>
+<th align="right">4</th>
+<th align="right">total</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1973</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">7</td>
+</tr>
+<tr class="even">
+<td align="right">1974</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="right">1976</td>
+<td align="right">0</td>
+<td align="right">43</td>
+<td align="right">45</td>
+<td align="right">13</td>
+<td align="right">101</td>
+</tr>
+<tr class="even">
+<td align="right">1977</td>
+<td align="right">0</td>
+<td align="right">61</td>
+<td align="right">40</td>
+<td align="right">0</td>
+<td align="right">101</td>
+</tr>
+<tr class="odd">
+<td align="right">1978</td>
+<td align="right">0</td>
+<td align="right">48</td>
+<td align="right">52</td>
+<td align="right">3</td>
+<td align="right">103</td>
+</tr>
+<tr class="even">
+<td align="right">1979</td>
+<td align="right">0</td>
+<td align="right">53</td>
+<td align="right">71</td>
+<td align="right">1</td>
+<td align="right">125</td>
+</tr>
+<tr class="odd">
+<td align="right">1980</td>
+<td align="right">0</td>
+<td align="right">55</td>
+<td align="right">40</td>
+<td align="right">7</td>
+<td align="right">102</td>
+</tr>
+<tr class="even">
+<td align="right">1981</td>
+<td align="right">0</td>
+<td align="right">55</td>
+<td align="right">22</td>
+<td align="right">1</td>
+<td align="right">78</td>
+</tr>
+<tr class="odd">
+<td align="right">1982</td>
+<td align="right">0</td>
+<td align="right">47</td>
+<td align="right">30</td>
+<td align="right">4</td>
+<td align="right">81</td>
+</tr>
+<tr class="even">
+<td align="right">1983</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">36</td>
+<td align="right">31</td>
+<td align="right">69</td>
+</tr>
+<tr class="odd">
+<td align="right">1984</td>
+<td align="right">0</td>
+<td align="right">29</td>
+<td align="right">65</td>
+<td align="right">19</td>
+<td align="right">113</td>
+</tr>
+<tr class="even">
+<td align="right">1985</td>
+<td align="right">0</td>
+<td align="right">14</td>
+<td align="right">58</td>
+<td align="right">21</td>
+<td align="right">93</td>
+</tr>
+<tr class="odd">
+<td align="right">1986</td>
+<td align="right">0</td>
+<td align="right">10</td>
+<td align="right">50</td>
+<td align="right">15</td>
+<td align="right">75</td>
+</tr>
+<tr class="even">
+<td align="right">1987</td>
+<td align="right">0</td>
+<td align="right">41</td>
+<td align="right">62</td>
+<td align="right">10</td>
+<td align="right">113</td>
+</tr>
+<tr class="odd">
+<td align="right">1988</td>
+<td align="right">0</td>
+<td align="right">89</td>
+<td align="right">41</td>
+<td align="right">7</td>
+<td align="right">137</td>
+</tr>
+<tr class="even">
+<td align="right">1989</td>
+<td align="right">0</td>
+<td align="right">56</td>
+<td align="right">47</td>
+<td align="right">14</td>
+<td align="right">117</td>
+</tr>
+<tr class="odd">
+<td align="right">1990</td>
+<td align="right">0</td>
+<td align="right">13</td>
+<td align="right">25</td>
+<td align="right">11</td>
+<td align="right">49</td>
+</tr>
+<tr class="even">
+<td align="right">1991</td>
+<td align="right">0</td>
+<td align="right">22</td>
+<td align="right">24</td>
+<td align="right">17</td>
+<td align="right">63</td>
+</tr>
+<tr class="odd">
+<td align="right">1992</td>
+<td align="right">0</td>
+<td align="right">10</td>
+<td align="right">27</td>
+<td align="right">20</td>
+<td align="right">57</td>
+</tr>
+<tr class="even">
+<td align="right">1993</td>
+<td align="right">0</td>
+<td align="right">13</td>
+<td align="right">29</td>
+<td align="right">20</td>
+<td align="right">62</td>
+</tr>
+<tr class="odd">
+<td align="right">1994</td>
+<td align="right">0</td>
+<td align="right">15</td>
+<td align="right">27</td>
+<td align="right">12</td>
+<td align="right">54</td>
+</tr>
+<tr class="even">
+<td align="right">1995</td>
+<td align="right">0</td>
+<td align="right">23</td>
+<td align="right">33</td>
+<td align="right">14</td>
+<td align="right">70</td>
+</tr>
+<tr class="odd">
+<td align="right">1996</td>
+<td align="right">0</td>
+<td align="right">17</td>
+<td align="right">29</td>
+<td align="right">5</td>
+<td align="right">51</td>
+</tr>
+<tr class="even">
+<td align="right">1997</td>
+<td align="right">0</td>
+<td align="right">14</td>
+<td align="right">26</td>
+<td align="right">9</td>
+<td align="right">49</td>
+</tr>
+<tr class="odd">
+<td align="right">1998</td>
+<td align="right">0</td>
+<td align="right">18</td>
+<td align="right">30</td>
+<td align="right">6</td>
+<td align="right">54</td>
+</tr>
+<tr class="even">
+<td align="right">1999</td>
+<td align="right">0</td>
+<td align="right">19</td>
+<td align="right">36</td>
+<td align="right">2</td>
+<td align="right">57</td>
+</tr>
+<tr class="odd">
+<td align="right">2000</td>
+<td align="right">0</td>
+<td align="right">28</td>
+<td align="right">21</td>
+<td align="right">7</td>
+<td align="right">56</td>
+</tr>
+<tr class="even">
+<td align="right">2001</td>
+<td align="right">0</td>
+<td align="right">20</td>
+<td align="right">45</td>
+<td align="right">13</td>
+<td align="right">78</td>
+</tr>
+<tr class="odd">
+<td align="right">2002</td>
+<td align="right">0</td>
+<td align="right">22</td>
+<td align="right">40</td>
+<td align="right">16</td>
+<td align="right">78</td>
+</tr>
+<tr class="even">
+<td align="right">2003</td>
+<td align="right">0</td>
+<td align="right">25</td>
+<td align="right">39</td>
+<td align="right">17</td>
+<td align="right">81</td>
+</tr>
+<tr class="odd">
+<td align="right">2004</td>
+<td align="right">0</td>
+<td align="right">30</td>
+<td align="right">30</td>
+<td align="right">36</td>
+<td align="right">96</td>
+</tr>
+<tr class="even">
+<td align="right">2005</td>
+<td align="right">1</td>
+<td align="right">29</td>
+<td align="right">48</td>
+<td align="right">40</td>
+<td align="right">118</td>
+</tr>
+<tr class="odd">
+<td align="right">2006</td>
+<td align="right">0</td>
+<td align="right">27</td>
+<td align="right">39</td>
+<td align="right">22</td>
+<td align="right">88</td>
+</tr>
+<tr class="even">
+<td align="right">2007</td>
+<td align="right">0</td>
+<td align="right">25</td>
+<td align="right">51</td>
+<td align="right">27</td>
+<td align="right">103</td>
+</tr>
+<tr class="odd">
+<td align="right">2008</td>
+<td align="right">0</td>
+<td align="right">22</td>
+<td align="right">34</td>
+<td align="right">14</td>
+<td align="right">70</td>
+</tr>
+<tr class="even">
+<td align="right">2009</td>
+<td align="right">0</td>
+<td align="right">25</td>
+<td align="right">44</td>
+<td align="right">22</td>
+<td align="right">91</td>
+</tr>
+<tr class="odd">
+<td align="right">2010</td>
+<td align="right">0</td>
+<td align="right">17</td>
+<td align="right">52</td>
+<td align="right">67</td>
+<td align="right">136</td>
+</tr>
+<tr class="even">
+<td align="right">2011</td>
+<td align="right">0</td>
+<td align="right">18</td>
+<td align="right">31</td>
+<td align="right">20</td>
+<td align="right">69</td>
+</tr>
+<tr class="odd">
+<td align="right">2012</td>
+<td align="right">0</td>
+<td align="right">12</td>
+<td align="right">32</td>
+<td align="right">16</td>
+<td align="right">60</td>
+</tr>
+<tr class="even">
+<td align="right">2013</td>
+<td align="right">0</td>
+<td align="right">10</td>
+<td align="right">23</td>
+<td align="right">3</td>
+<td align="right">36</td>
+</tr>
+<tr class="odd">
+<td align="right">2014</td>
+<td align="right">0</td>
+<td align="right">12</td>
+<td align="right">18</td>
+<td align="right">16</td>
+<td align="right">46</td>
+</tr>
+<tr class="even">
+<td align="right">2015</td>
+<td align="right">0</td>
+<td align="right">21</td>
+<td align="right">16</td>
+<td align="right">6</td>
+<td align="right">43</td>
+</tr>
+<tr class="odd">
+<td align="right">2016</td>
+<td align="right">0</td>
+<td align="right">23</td>
+<td align="right">29</td>
+<td align="right">11</td>
+<td align="right">63</td>
+</tr>
+<tr class="even">
+<td align="right">2017</td>
+<td align="right">0</td>
+<td align="right">15</td>
+<td align="right">39</td>
+<td align="right">10</td>
+<td align="right">64</td>
+</tr>
+<tr class="odd">
+<td align="right">2018</td>
+<td align="right">0</td>
+<td align="right">20</td>
+<td align="right">50</td>
+<td align="right">5</td>
+<td align="right">75</td>
+</tr>
+<tr class="even">
+<td align="right">2019</td>
+<td align="right">0</td>
+<td align="right">13</td>
+<td align="right">56</td>
+<td align="right">3</td>
+<td align="right">72</td>
+</tr>
+<tr class="odd">
+<td align="right">2020</td>
+<td align="right">0</td>
+<td align="right">8</td>
+<td align="right">31</td>
+<td align="right">15</td>
+<td align="right">54</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="region" class="section level3">
+<h3><span class="header-section-number">3.2.3</span> region</h3>
+<pre class="r"><code>dfr &lt;- ddply(df,c(&#39;year&#39;,&#39;region&#39;),summarise,N=length(unique(id)),n=sum(n))
+dfr &lt;- dcast(dfr,year~region,value.var=&#39;N&#39;,fill = 0)
+dfr$total &lt;- rowSums(dfr[,-1])
+kable(dfr)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">year</th>
+<th align="right">eNL</th>
+<th align="right">nGSL</th>
+<th align="right">sGSL</th>
+<th align="right">sNL</th>
+<th align="right">SS</th>
+<th align="right">wNL</th>
+<th align="right">total</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1973</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">7</td>
+</tr>
+<tr class="even">
+<td align="right">1974</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="right">1976</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">32</td>
+<td align="right">0</td>
+<td align="right">69</td>
+<td align="right">0</td>
+<td align="right">101</td>
+</tr>
+<tr class="even">
+<td align="right">1977</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">35</td>
+<td align="right">0</td>
+<td align="right">66</td>
+<td align="right">0</td>
+<td align="right">101</td>
+</tr>
+<tr class="odd">
+<td align="right">1978</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">37</td>
+<td align="right">0</td>
+<td align="right">66</td>
+<td align="right">0</td>
+<td align="right">103</td>
+</tr>
+<tr class="even">
+<td align="right">1979</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">75</td>
+<td align="right">0</td>
+<td align="right">50</td>
+<td align="right">0</td>
+<td align="right">125</td>
+</tr>
+<tr class="odd">
+<td align="right">1980</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">50</td>
+<td align="right">0</td>
+<td align="right">52</td>
+<td align="right">0</td>
+<td align="right">102</td>
+</tr>
+<tr class="even">
+<td align="right">1981</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">38</td>
+<td align="right">0</td>
+<td align="right">40</td>
+<td align="right">0</td>
+<td align="right">78</td>
+</tr>
+<tr class="odd">
+<td align="right">1982</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">25</td>
+<td align="right">0</td>
+<td align="right">56</td>
+<td align="right">0</td>
+<td align="right">81</td>
+</tr>
+<tr class="even">
+<td align="right">1983</td>
+<td align="right">51</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">13</td>
+<td align="right">0</td>
+<td align="right">69</td>
+</tr>
+<tr class="odd">
+<td align="right">1984</td>
+<td align="right">44</td>
+<td align="right">0</td>
+<td align="right">60</td>
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">7</td>
+<td align="right">113</td>
+</tr>
+<tr class="even">
+<td align="right">1985</td>
+<td align="right">36</td>
+<td align="right">0</td>
+<td align="right">52</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">4</td>
+<td align="right">93</td>
+</tr>
+<tr class="odd">
+<td align="right">1986</td>
+<td align="right">39</td>
+<td align="right">1</td>
+<td align="right">32</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">75</td>
+</tr>
+<tr class="even">
+<td align="right">1987</td>
+<td align="right">18</td>
+<td align="right">0</td>
+<td align="right">71</td>
+<td align="right">2</td>
+<td align="right">4</td>
+<td align="right">18</td>
+<td align="right">113</td>
+</tr>
+<tr class="odd">
+<td align="right">1988</td>
+<td align="right">18</td>
+<td align="right">0</td>
+<td align="right">79</td>
+<td align="right">4</td>
+<td align="right">26</td>
+<td align="right">10</td>
+<td align="right">137</td>
+</tr>
+<tr class="even">
+<td align="right">1989</td>
+<td align="right">24</td>
+<td align="right">0</td>
+<td align="right">74</td>
+<td align="right">3</td>
+<td align="right">8</td>
+<td align="right">8</td>
+<td align="right">117</td>
+</tr>
+<tr class="odd">
+<td align="right">1990</td>
+<td align="right">10</td>
+<td align="right">0</td>
+<td align="right">30</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">9</td>
+<td align="right">49</td>
+</tr>
+<tr class="even">
+<td align="right">1991</td>
+<td align="right">6</td>
+<td align="right">0</td>
+<td align="right">28</td>
+<td align="right">4</td>
+<td align="right">8</td>
+<td align="right">17</td>
+<td align="right">63</td>
+</tr>
+<tr class="odd">
+<td align="right">1992</td>
+<td align="right">9</td>
+<td align="right">0</td>
+<td align="right">27</td>
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">19</td>
+<td align="right">57</td>
+</tr>
+<tr class="even">
+<td align="right">1993</td>
+<td align="right">12</td>
+<td align="right">0</td>
+<td align="right">32</td>
+<td align="right">2</td>
+<td align="right">1</td>
+<td align="right">15</td>
+<td align="right">62</td>
+</tr>
+<tr class="odd">
+<td align="right">1994</td>
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">30</td>
+<td align="right">2</td>
+<td align="right">9</td>
+<td align="right">11</td>
+<td align="right">54</td>
+</tr>
+<tr class="even">
+<td align="right">1995</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">40</td>
+<td align="right">0</td>
+<td align="right">17</td>
+<td align="right">11</td>
+<td align="right">70</td>
+</tr>
+<tr class="odd">
+<td align="right">1996</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">26</td>
+<td align="right">0</td>
+<td align="right">12</td>
+<td align="right">12</td>
+<td align="right">51</td>
+</tr>
+<tr class="even">
+<td align="right">1997</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">40</td>
+<td align="right">0</td>
+<td align="right">7</td>
+<td align="right">2</td>
+<td align="right">49</td>
+</tr>
+<tr class="odd">
+<td align="right">1998</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">43</td>
+<td align="right">0</td>
+<td align="right">11</td>
+<td align="right">0</td>
+<td align="right">54</td>
+</tr>
+<tr class="even">
+<td align="right">1999</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">49</td>
+<td align="right">0</td>
+<td align="right">7</td>
+<td align="right">1</td>
+<td align="right">57</td>
+</tr>
+<tr class="odd">
+<td align="right">2000</td>
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="right">37</td>
+<td align="right">0</td>
+<td align="right">12</td>
+<td align="right">2</td>
+<td align="right">56</td>
+</tr>
+<tr class="even">
+<td align="right">2001</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">40</td>
+<td align="right">0</td>
+<td align="right">22</td>
+<td align="right">14</td>
+<td align="right">78</td>
+</tr>
+<tr class="odd">
+<td align="right">2002</td>
+<td align="right">14</td>
+<td align="right">0</td>
+<td align="right">43</td>
+<td align="right">0</td>
+<td align="right">7</td>
+<td align="right">14</td>
+<td align="right">78</td>
+</tr>
+<tr class="even">
+<td align="right">2003</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">44</td>
+<td align="right">0</td>
+<td align="right">17</td>
+<td align="right">20</td>
+<td align="right">81</td>
+</tr>
+<tr class="odd">
+<td align="right">2004</td>
+<td align="right">22</td>
+<td align="right">0</td>
+<td align="right">35</td>
+<td align="right">2</td>
+<td align="right">27</td>
+<td align="right">10</td>
+<td align="right">96</td>
+</tr>
+<tr class="even">
+<td align="right">2005</td>
+<td align="right">28</td>
+<td align="right">1</td>
+<td align="right">50</td>
+<td align="right">3</td>
+<td align="right">24</td>
+<td align="right">12</td>
+<td align="right">118</td>
+</tr>
+<tr class="odd">
+<td align="right">2006</td>
+<td align="right">11</td>
+<td align="right">1</td>
+<td align="right">54</td>
+<td align="right">0</td>
+<td align="right">8</td>
+<td align="right">14</td>
+<td align="right">88</td>
+</tr>
+<tr class="even">
+<td align="right">2007</td>
+<td align="right">25</td>
+<td align="right">0</td>
+<td align="right">47</td>
+<td align="right">4</td>
+<td align="right">9</td>
+<td align="right">18</td>
+<td align="right">103</td>
+</tr>
+<tr class="odd">
+<td align="right">2008</td>
+<td align="right">11</td>
+<td align="right">1</td>
+<td align="right">45</td>
+<td align="right">2</td>
+<td align="right">5</td>
+<td align="right">6</td>
+<td align="right">70</td>
+</tr>
+<tr class="even">
+<td align="right">2009</td>
+<td align="right">14</td>
+<td align="right">2</td>
+<td align="right">43</td>
+<td align="right">5</td>
+<td align="right">11</td>
+<td align="right">16</td>
+<td align="right">91</td>
+</tr>
+<tr class="odd">
+<td align="right">2010</td>
+<td align="right">63</td>
+<td align="right">4</td>
+<td align="right">46</td>
+<td align="right">5</td>
+<td align="right">1</td>
+<td align="right">17</td>
+<td align="right">136</td>
+</tr>
+<tr class="even">
+<td align="right">2011</td>
+<td align="right">14</td>
+<td align="right">3</td>
+<td align="right">29</td>
+<td align="right">6</td>
+<td align="right">2</td>
+<td align="right">15</td>
+<td align="right">69</td>
+</tr>
+<tr class="odd">
+<td align="right">2012</td>
+<td align="right">13</td>
+<td align="right">3</td>
+<td align="right">28</td>
+<td align="right">3</td>
+<td align="right">0</td>
+<td align="right">13</td>
+<td align="right">60</td>
+</tr>
+<tr class="even">
+<td align="right">2013</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">28</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">36</td>
+</tr>
+<tr class="odd">
+<td align="right">2014</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">36</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">10</td>
+<td align="right">46</td>
+</tr>
+<tr class="even">
+<td align="right">2015</td>
+<td align="right">3</td>
+<td align="right">1</td>
+<td align="right">38</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">43</td>
+</tr>
+<tr class="odd">
+<td align="right">2016</td>
+<td align="right">5</td>
+<td align="right">2</td>
+<td align="right">48</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">6</td>
+<td align="right">63</td>
+</tr>
+<tr class="even">
+<td align="right">2017</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">55</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">6</td>
+<td align="right">64</td>
+</tr>
+<tr class="odd">
+<td align="right">2018</td>
+<td align="right">4</td>
+<td align="right">6</td>
+<td align="right">42</td>
+<td align="right">0</td>
+<td align="right">21</td>
+<td align="right">2</td>
+<td align="right">75</td>
+</tr>
+<tr class="even">
+<td align="right">2019</td>
+<td align="right">9</td>
+<td align="right">3</td>
+<td align="right">34</td>
+<td align="right">0</td>
+<td align="right">26</td>
+<td align="right">0</td>
+<td align="right">72</td>
+</tr>
+<tr class="odd">
+<td align="right">2020</td>
+<td align="right">13</td>
+<td align="right">11</td>
+<td align="right">30</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">54</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="gear" class="section level3">
+<h3><span class="header-section-number">3.2.4</span> gear</h3>
+<pre class="r"><code>dfg &lt;- ddply(df,c(&#39;year&#39;,&#39;gear&#39;),summarise,N=length(unique(id)),n=sum(n))
+dfg &lt;- dcast(dfg,year~gear,value.var=&#39;N&#39;,fill = 0)
+dfg$total &lt;- rowSums(dfg[,-1])
+kable(dfg)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">year</th>
+<th align="right">Gillnets</th>
+<th align="right">Lines</th>
+<th align="right">Misc</th>
+<th align="right">Seines_Nets_Traps_Weirs</th>
+<th align="right">total</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1973</td>
+<td align="right">2</td>
+<td align="right">3</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">7</td>
+</tr>
+<tr class="even">
+<td align="right">1974</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">2</td>
+</tr>
+<tr class="odd">
+<td align="right">1976</td>
+<td align="right">27</td>
+<td align="right">11</td>
+<td align="right">0</td>
+<td align="right">63</td>
+<td align="right">101</td>
+</tr>
+<tr class="even">
+<td align="right">1977</td>
+<td align="right">38</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">56</td>
+<td align="right">101</td>
+</tr>
+<tr class="odd">
+<td align="right">1978</td>
+<td align="right">38</td>
+<td align="right">17</td>
+<td align="right">0</td>
+<td align="right">48</td>
+<td align="right">103</td>
+</tr>
+<tr class="even">
+<td align="right">1979</td>
+<td align="right">65</td>
+<td align="right">21</td>
+<td align="right">2</td>
+<td align="right">37</td>
+<td align="right">125</td>
+</tr>
+<tr class="odd">
+<td align="right">1980</td>
+<td align="right">72</td>
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="right">25</td>
+<td align="right">102</td>
+</tr>
+<tr class="even">
+<td align="right">1981</td>
+<td align="right">49</td>
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">27</td>
+<td align="right">78</td>
+</tr>
+<tr class="odd">
+<td align="right">1982</td>
+<td align="right">46</td>
+<td align="right">3</td>
+<td align="right">0</td>
+<td align="right">32</td>
+<td align="right">81</td>
+</tr>
+<tr class="even">
+<td align="right">1983</td>
+<td align="right">21</td>
+<td align="right">13</td>
+<td align="right">0</td>
+<td align="right">35</td>
+<td align="right">69</td>
+</tr>
+<tr class="odd">
+<td align="right">1984</td>
+<td align="right">61</td>
+<td align="right">33</td>
+<td align="right">0</td>
+<td align="right">19</td>
+<td align="right">113</td>
+</tr>
+<tr class="even">
+<td align="right">1985</td>
+<td align="right">28</td>
+<td align="right">29</td>
+<td align="right">0</td>
+<td align="right">36</td>
+<td align="right">93</td>
+</tr>
+<tr class="odd">
+<td align="right">1986</td>
+<td align="right">23</td>
+<td align="right">16</td>
+<td align="right">0</td>
+<td align="right">36</td>
+<td align="right">75</td>
+</tr>
+<tr class="even">
+<td align="right">1987</td>
+<td align="right">60</td>
+<td align="right">20</td>
+<td align="right">0</td>
+<td align="right">33</td>
+<td align="right">113</td>
+</tr>
+<tr class="odd">
+<td align="right">1988</td>
+<td align="right">90</td>
+<td align="right">11</td>
+<td align="right">0</td>
+<td align="right">36</td>
+<td align="right">137</td>
+</tr>
+<tr class="even">
+<td align="right">1989</td>
+<td align="right">64</td>
+<td align="right">20</td>
+<td align="right">0</td>
+<td align="right">33</td>
+<td align="right">117</td>
+</tr>
+<tr class="odd">
+<td align="right">1990</td>
+<td align="right">18</td>
+<td align="right">14</td>
+<td align="right">0</td>
+<td align="right">17</td>
+<td align="right">49</td>
+</tr>
+<tr class="even">
+<td align="right">1991</td>
+<td align="right">26</td>
+<td align="right">8</td>
+<td align="right">0</td>
+<td align="right">29</td>
+<td align="right">63</td>
+</tr>
+<tr class="odd">
+<td align="right">1992</td>
+<td align="right">19</td>
+<td align="right">10</td>
+<td align="right">0</td>
+<td align="right">28</td>
+<td align="right">57</td>
+</tr>
+<tr class="even">
+<td align="right">1993</td>
+<td align="right">28</td>
+<td align="right">10</td>
+<td align="right">0</td>
+<td align="right">24</td>
+<td align="right">62</td>
+</tr>
+<tr class="odd">
+<td align="right">1994</td>
+<td align="right">21</td>
+<td align="right">15</td>
+<td align="right">2</td>
+<td align="right">16</td>
+<td align="right">54</td>
+</tr>
+<tr class="even">
+<td align="right">1995</td>
+<td align="right">30</td>
+<td align="right">21</td>
+<td align="right">5</td>
+<td align="right">14</td>
+<td align="right">70</td>
+</tr>
+<tr class="odd">
+<td align="right">1996</td>
+<td align="right">19</td>
+<td align="right">16</td>
+<td align="right">4</td>
+<td align="right">12</td>
+<td align="right">51</td>
+</tr>
+<tr class="even">
+<td align="right">1997</td>
+<td align="right">21</td>
+<td align="right">21</td>
+<td align="right">0</td>
+<td align="right">7</td>
+<td align="right">49</td>
+</tr>
+<tr class="odd">
+<td align="right">1998</td>
+<td align="right">29</td>
+<td align="right">20</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">54</td>
+</tr>
+<tr class="even">
+<td align="right">1999</td>
+<td align="right">23</td>
+<td align="right">29</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">57</td>
+</tr>
+<tr class="odd">
+<td align="right">2000</td>
+<td align="right">26</td>
+<td align="right">17</td>
+<td align="right">0</td>
+<td align="right">13</td>
+<td align="right">56</td>
+</tr>
+<tr class="even">
+<td align="right">2001</td>
+<td align="right">24</td>
+<td align="right">28</td>
+<td align="right">0</td>
+<td align="right">26</td>
+<td align="right">78</td>
+</tr>
+<tr class="odd">
+<td align="right">2002</td>
+<td align="right">23</td>
+<td align="right">22</td>
+<td align="right">0</td>
+<td align="right">33</td>
+<td align="right">78</td>
+</tr>
+<tr class="even">
+<td align="right">2003</td>
+<td align="right">24</td>
+<td align="right">32</td>
+<td align="right">0</td>
+<td align="right">25</td>
+<td align="right">81</td>
+</tr>
+<tr class="odd">
+<td align="right">2004</td>
+<td align="right">19</td>
+<td align="right">26</td>
+<td align="right">0</td>
+<td align="right">51</td>
+<td align="right">96</td>
+</tr>
+<tr class="even">
+<td align="right">2005</td>
+<td align="right">30</td>
+<td align="right">29</td>
+<td align="right">3</td>
+<td align="right">56</td>
+<td align="right">118</td>
+</tr>
+<tr class="odd">
+<td align="right">2006</td>
+<td align="right">25</td>
+<td align="right">36</td>
+<td align="right">0</td>
+<td align="right">27</td>
+<td align="right">88</td>
+</tr>
+<tr class="even">
+<td align="right">2007</td>
+<td align="right">19</td>
+<td align="right">34</td>
+<td align="right">0</td>
+<td align="right">50</td>
+<td align="right">103</td>
+</tr>
+<tr class="odd">
+<td align="right">2008</td>
+<td align="right">19</td>
+<td align="right">27</td>
+<td align="right">1</td>
+<td align="right">23</td>
+<td align="right">70</td>
+</tr>
+<tr class="even">
+<td align="right">2009</td>
+<td align="right">21</td>
+<td align="right">31</td>
+<td align="right">1</td>
+<td align="right">38</td>
+<td align="right">91</td>
+</tr>
+<tr class="odd">
+<td align="right">2010</td>
+<td align="right">24</td>
+<td align="right">36</td>
+<td align="right">13</td>
+<td align="right">63</td>
+<td align="right">136</td>
+</tr>
+<tr class="even">
+<td align="right">2011</td>
+<td align="right">26</td>
+<td align="right">17</td>
+<td align="right">0</td>
+<td align="right">26</td>
+<td align="right">69</td>
+</tr>
+<tr class="odd">
+<td align="right">2012</td>
+<td align="right">26</td>
+<td align="right">24</td>
+<td align="right">0</td>
+<td align="right">10</td>
+<td align="right">60</td>
+</tr>
+<tr class="even">
+<td align="right">2013</td>
+<td align="right">9</td>
+<td align="right">19</td>
+<td align="right">0</td>
+<td align="right">8</td>
+<td align="right">36</td>
+</tr>
+<tr class="odd">
+<td align="right">2014</td>
+<td align="right">12</td>
+<td align="right">24</td>
+<td align="right">0</td>
+<td align="right">10</td>
+<td align="right">46</td>
+</tr>
+<tr class="even">
+<td align="right">2015</td>
+<td align="right">20</td>
+<td align="right">18</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">43</td>
+</tr>
+<tr class="odd">
+<td align="right">2016</td>
+<td align="right">20</td>
+<td align="right">29</td>
+<td align="right">0</td>
+<td align="right">14</td>
+<td align="right">63</td>
+</tr>
+<tr class="even">
+<td align="right">2017</td>
+<td align="right">17</td>
+<td align="right">38</td>
+<td align="right">0</td>
+<td align="right">9</td>
+<td align="right">64</td>
+</tr>
+<tr class="odd">
+<td align="right">2018</td>
+<td align="right">15</td>
+<td align="right">34</td>
+<td align="right">0</td>
+<td align="right">26</td>
+<td align="right">75</td>
+</tr>
+<tr class="even">
+<td align="right">2019</td>
+<td align="right">12</td>
+<td align="right">30</td>
+<td align="right">0</td>
+<td align="right">30</td>
+<td align="right">72</td>
+</tr>
+<tr class="odd">
+<td align="right">2020</td>
+<td align="right">17</td>
+<td align="right">23</td>
+<td align="right">1</td>
+<td align="right">13</td>
+<td align="right">54</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="plots" class="section level2 tabset">
+<h2><span class="header-section-number">3.3</span> PLOTS</h2>
+<div id="period-1" class="section level3">
+<h3><span class="header-section-number">3.3.1</span> period</h3>
+<pre class="r"><code>dfp &lt;- ddply(df,c(&#39;year&#39;,&#39;period&#39;),summarise,N=length(unique(id)),n=sum(n))
+grid.arrange(ggplot(dfp,aes(x=year,y=N,fill=period))+geom_bar(stat=&#39;identity&#39;)+scale_fill_viridis_c(),
+             ggplot(dfp,aes(x=year,y=n,fill=period))+geom_bar(stat=&#39;identity&#39;)+scale_fill_viridis_c(),ncol=1)</code></pre>
+<p><img src="3.0_caa_files/figure-html/lf_samples_period-1.png" width="864" style="display: block; margin: auto;" /></p>
+</div>
+<div id="region-1" class="section level3">
+<h3><span class="header-section-number">3.3.2</span> region</h3>
+<pre class="r"><code>dfr &lt;- ddply(df,c(&#39;year&#39;,&#39;region&#39;),summarise,N=length(unique(id)),n=sum(n))
+grid.arrange(ggplot(dfr,aes(x=year,y=N,fill=region))+geom_bar(stat=&#39;identity&#39;)+scale_fill_viridis_d(),
+             ggplot(dfr,aes(x=year,y=n,fill=region))+geom_bar(stat=&#39;identity&#39;)+scale_fill_viridis_d(),ncol=1)</code></pre>
+<p><img src="3.0_caa_files/figure-html/lf_samples_region-1.png" width="864" style="display: block; margin: auto;" /></p>
+</div>
+<div id="gear-1" class="section level3">
+<h3><span class="header-section-number">3.3.3</span> gear</h3>
+<pre class="r"><code>dfg &lt;- ddply(df,c(&#39;year&#39;,&#39;gear&#39;),summarise,N=length(unique(id)),n=sum(n))
+grid.arrange(ggplot(dfg,aes(x=year,y=N,fill=gear))+geom_bar(stat=&#39;identity&#39;)+scale_fill_viridis_d(),
+             ggplot(dfg,aes(x=year,y=n,fill=gear))+geom_bar(stat=&#39;identity&#39;)+scale_fill_viridis_d(),ncol=1)</code></pre>
+<p><img src="3.0_caa_files/figure-html/lf_samples_gear-1.png" width="864" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+</div>
+<div id="bio-data" class="section level1">
+<h1><span class="header-section-number">4</span> BIO DATA</h1>
+<pre class="r"><code>## subset
+bio.caa &lt;- bio[!is.na(bio$agef) &amp; !is.na(bio$length),
+               c(&#39;year&#39;,&#39;trim&#39;,&#39;nafo&#39;,&#39;gear&#39;,&#39;length&#39;,&#39;agef&#39;,&#39;sample.id&#39;)]
+names(bio.caa)[6] &lt;- &#39;age&#39;
+
+## remove absurd ones
+# ages too high
+table(bio.caa$age)
+## 
+##     0     1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17    18    42    63 
+##   934 10969 26416 26426 18065 12165  8755  6314  3887  3064  1934  1166   483   197   102    40    20     7     6     1     1
+bio.caa &lt;- bio.caa[bio.caa$age&lt;18,]    # 4 out of 6 fish have wrong length, unsure about remaining two
+
+# length not matching
+bio.caa &lt;- ddply(bio.caa,c(&#39;age&#39;),transform,outlier=outlier(length,coef=3)) # rule of thumb extremes
+bio.caa[bio.caa$age==0 &amp; bio.caa$length&gt;300,&#39;outlier&#39;] &lt;- TRUE              # odd second mod
+table(bio.caa$outlier,bio.caa$age)
+##        
+##             0     1     2     3     4     5     6     7     8     9    10    11    12    13    14    15    16    17
+##   FALSE   861 10949 26372 26399 18042 12160  8751  6312  3885  3062  1934  1166   483   196   102    40    20     7
+##   TRUE     73    20    44    27    23     5     4     2     2     2     0     0     0     1     0     0     0     0
+
+# check
+grid.arrange(
+  ggplot(bio.caa,aes(x=length,fill=outlier))+
+    geom_histogram()+
+    facet_wrap(~age,scale=&#39;free&#39;),
+  ggplot(bio.caa,aes(x=age,y=length,group=age))+
+    geom_boxplot()+
+    geom_point(data=bio.caa[bio.caa$outlier==T,],aes(col=outlier)),
+  ncol=2,widths=c(2,1)
+)</code></pre>
+<p><img src="3.0_caa_files/figure-html/al%20global-1.png" width="1344" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>bio.caa &lt;- bio.caa[bio.caa$outlier==FALSE,]
+bio.caa$outlier &lt;- NULL
+
+## group regions and gears
+# PERIOD: quarter
+names(bio.caa)[2] &lt;- &#39;period&#39;
+table(bio.caa$period,useNA = &#39;always&#39;)
+## 
+##     1     2     3     4  &lt;NA&gt; 
+##   470 29909 65895 24467     0
+
+# REGION: large scale regions 
+bio.caa$region &lt;- group.region[match(bio.caa$nafo,group.region$nafo),&#39;region&#39;]
+bio.caa$nafo &lt;- NULL
+table(bio.caa$region,useNA = &#39;always&#39;)
+## 
+##   eNL  nGSL  sGSL   sNL    SS   wNL  &lt;NA&gt; 
+## 20337  1899 57436  2583 25505 12980     1
+
+# GEAR: similar selectivity gears
+bio.caa$gear &lt;- group.gear[match(bio.caa$gear,group.gear$gear.cat),&#39;gear.group&#39;]
+table(bio.caa$gear,useNA = &#39;always&#39;)
+## 
+##                Gillnets                   Lines                    Misc Seines_Nets_Traps_Weirs                    &lt;NA&gt; 
+##                   36630                   34670                    2526                   46915                       0
+
+## make equal length classes
+bio.caa$length &lt;- roundFish(bio.caa$length,5) 
+bio.caa &lt;- bio.caa[bio.caa$length&gt;0,]
+range(bio.caa$length)
+## [1]  65 465
+
+save(bio.caa, file =  paste0(dir.rdat, &quot;bio.caa.Rdata&quot;))</code></pre>
+<div id="tables-1" class="section level2 tabset">
+<h2><span class="header-section-number">4.1</span> TABLES</h2>
+<div id="overview-1" class="section level3">
+<h3><span class="header-section-number">4.1.1</span> overview</h3>
+<pre class="r"><code>df &lt;- bio.caa
+df$id &lt;- with(df,paste(sample.id,year,period,region,gear),collapse=&#39;.&#39;)
+al.overall &lt;- ddply(df,c(&#39;year&#39;),summarise,N=length(unique(id)),n=length(id),mean=mean(table(id)))
+kable(al.overall)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">year</th>
+<th align="right">N</th>
+<th align="right">n</th>
+<th align="right">mean</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1973</td>
+<td align="right">97</td>
+<td align="right">3486</td>
+<td align="right">35.93814</td>
+</tr>
+<tr class="even">
+<td align="right">1974</td>
+<td align="right">45</td>
+<td align="right">1860</td>
+<td align="right">41.33333</td>
+</tr>
+<tr class="odd">
+<td align="right">1975</td>
+<td align="right">58</td>
+<td align="right">2179</td>
+<td align="right">37.56897</td>
+</tr>
+<tr class="even">
+<td align="right">1976</td>
+<td align="right">89</td>
+<td align="right">2980</td>
+<td align="right">33.48315</td>
+</tr>
+<tr class="odd">
+<td align="right">1977</td>
+<td align="right">91</td>
+<td align="right">3262</td>
+<td align="right">35.84615</td>
+</tr>
+<tr class="even">
+<td align="right">1978</td>
+<td align="right">74</td>
+<td align="right">1962</td>
+<td align="right">26.51351</td>
+</tr>
+<tr class="odd">
+<td align="right">1979</td>
+<td align="right">107</td>
+<td align="right">2850</td>
+<td align="right">26.63551</td>
+</tr>
+<tr class="even">
+<td align="right">1980</td>
+<td align="right">71</td>
+<td align="right">1864</td>
+<td align="right">26.25352</td>
+</tr>
+<tr class="odd">
+<td align="right">1981</td>
+<td align="right">68</td>
+<td align="right">1635</td>
+<td align="right">24.04412</td>
+</tr>
+<tr class="even">
+<td align="right">1982</td>
+<td align="right">54</td>
+<td align="right">1441</td>
+<td align="right">26.68519</td>
+</tr>
+<tr class="odd">
+<td align="right">1983</td>
+<td align="right">116</td>
+<td align="right">3647</td>
+<td align="right">31.43966</td>
+</tr>
+<tr class="even">
+<td align="right">1984</td>
+<td align="right">123</td>
+<td align="right">4117</td>
+<td align="right">33.47154</td>
+</tr>
+<tr class="odd">
+<td align="right">1985</td>
+<td align="right">103</td>
+<td align="right">3532</td>
+<td align="right">34.29126</td>
+</tr>
+<tr class="even">
+<td align="right">1986</td>
+<td align="right">85</td>
+<td align="right">2910</td>
+<td align="right">34.23529</td>
+</tr>
+<tr class="odd">
+<td align="right">1987</td>
+<td align="right">81</td>
+<td align="right">2449</td>
+<td align="right">30.23457</td>
+</tr>
+<tr class="even">
+<td align="right">1988</td>
+<td align="right">62</td>
+<td align="right">2004</td>
+<td align="right">32.32258</td>
+</tr>
+<tr class="odd">
+<td align="right">1989</td>
+<td align="right">85</td>
+<td align="right">2810</td>
+<td align="right">33.05882</td>
+</tr>
+<tr class="even">
+<td align="right">1990</td>
+<td align="right">58</td>
+<td align="right">1934</td>
+<td align="right">33.34483</td>
+</tr>
+<tr class="odd">
+<td align="right">1991</td>
+<td align="right">57</td>
+<td align="right">2014</td>
+<td align="right">35.33333</td>
+</tr>
+<tr class="even">
+<td align="right">1992</td>
+<td align="right">57</td>
+<td align="right">2226</td>
+<td align="right">39.05263</td>
+</tr>
+<tr class="odd">
+<td align="right">1993</td>
+<td align="right">71</td>
+<td align="right">2435</td>
+<td align="right">34.29577</td>
+</tr>
+<tr class="even">
+<td align="right">1994</td>
+<td align="right">40</td>
+<td align="right">1447</td>
+<td align="right">36.17500</td>
+</tr>
+<tr class="odd">
+<td align="right">1995</td>
+<td align="right">66</td>
+<td align="right">2311</td>
+<td align="right">35.01515</td>
+</tr>
+<tr class="even">
+<td align="right">1996</td>
+<td align="right">48</td>
+<td align="right">1832</td>
+<td align="right">38.16667</td>
+</tr>
+<tr class="odd">
+<td align="right">1997</td>
+<td align="right">48</td>
+<td align="right">1866</td>
+<td align="right">38.87500</td>
+</tr>
+<tr class="even">
+<td align="right">1998</td>
+<td align="right">52</td>
+<td align="right">1891</td>
+<td align="right">36.36538</td>
+</tr>
+<tr class="odd">
+<td align="right">1999</td>
+<td align="right">53</td>
+<td align="right">2151</td>
+<td align="right">40.58491</td>
+</tr>
+<tr class="even">
+<td align="right">2000</td>
+<td align="right">52</td>
+<td align="right">1795</td>
+<td align="right">34.51923</td>
+</tr>
+<tr class="odd">
+<td align="right">2001</td>
+<td align="right">66</td>
+<td align="right">2475</td>
+<td align="right">37.50000</td>
+</tr>
+<tr class="even">
+<td align="right">2002</td>
+<td align="right">58</td>
+<td align="right">1931</td>
+<td align="right">33.29310</td>
+</tr>
+<tr class="odd">
+<td align="right">2003</td>
+<td align="right">78</td>
+<td align="right">2552</td>
+<td align="right">32.71795</td>
+</tr>
+<tr class="even">
+<td align="right">2004</td>
+<td align="right">71</td>
+<td align="right">2625</td>
+<td align="right">36.97183</td>
+</tr>
+<tr class="odd">
+<td align="right">2005</td>
+<td align="right">108</td>
+<td align="right">3973</td>
+<td align="right">36.78704</td>
+</tr>
+<tr class="even">
+<td align="right">2006</td>
+<td align="right">128</td>
+<td align="right">4663</td>
+<td align="right">36.42969</td>
+</tr>
+<tr class="odd">
+<td align="right">2007</td>
+<td align="right">126</td>
+<td align="right">3988</td>
+<td align="right">31.65079</td>
+</tr>
+<tr class="even">
+<td align="right">2008</td>
+<td align="right">73</td>
+<td align="right">2545</td>
+<td align="right">34.86301</td>
+</tr>
+<tr class="odd">
+<td align="right">2009</td>
+<td align="right">93</td>
+<td align="right">3292</td>
+<td align="right">35.39785</td>
+</tr>
+<tr class="even">
+<td align="right">2010</td>
+<td align="right">134</td>
+<td align="right">4530</td>
+<td align="right">33.80597</td>
+</tr>
+<tr class="odd">
+<td align="right">2011</td>
+<td align="right">68</td>
+<td align="right">2455</td>
+<td align="right">36.10294</td>
+</tr>
+<tr class="even">
+<td align="right">2012</td>
+<td align="right">60</td>
+<td align="right">2081</td>
+<td align="right">34.68333</td>
+</tr>
+<tr class="odd">
+<td align="right">2013</td>
+<td align="right">36</td>
+<td align="right">1083</td>
+<td align="right">30.08333</td>
+</tr>
+<tr class="even">
+<td align="right">2014</td>
+<td align="right">46</td>
+<td align="right">1439</td>
+<td align="right">31.28261</td>
+</tr>
+<tr class="odd">
+<td align="right">2015</td>
+<td align="right">42</td>
+<td align="right">1353</td>
+<td align="right">32.21429</td>
+</tr>
+<tr class="even">
+<td align="right">2016</td>
+<td align="right">57</td>
+<td align="right">2148</td>
+<td align="right">37.68421</td>
+</tr>
+<tr class="odd">
+<td align="right">2017</td>
+<td align="right">72</td>
+<td align="right">2371</td>
+<td align="right">32.93056</td>
+</tr>
+<tr class="even">
+<td align="right">2018</td>
+<td align="right">62</td>
+<td align="right">2649</td>
+<td align="right">42.72581</td>
+</tr>
+<tr class="odd">
+<td align="right">2019</td>
+<td align="right">195</td>
+<td align="right">3757</td>
+<td align="right">19.26667</td>
+</tr>
+<tr class="even">
+<td align="right">2020</td>
+<td align="right">80</td>
+<td align="right">1941</td>
+<td align="right">24.26250</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="period-2" class="section level3">
+<h3><span class="header-section-number">4.1.2</span> period</h3>
+<pre class="r"><code>dfp &lt;- ddply(df,c(&#39;year&#39;,&#39;period&#39;),summarise,N=length(unique(id)),n=sum(n))
+dfp &lt;- dcast(dfp,year~period,value.var=&#39;N&#39;,fill = 0)
+dfp$total &lt;- rowSums(dfp[,-1])
+kable(dfp)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">year</th>
+<th align="right">1</th>
+<th align="right">2</th>
+<th align="right">3</th>
+<th align="right">4</th>
+<th align="right">total</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1973</td>
+<td align="right">0</td>
+<td align="right">14</td>
+<td align="right">70</td>
+<td align="right">13</td>
+<td align="right">97</td>
+</tr>
+<tr class="even">
+<td align="right">1974</td>
+<td align="right">0</td>
+<td align="right">15</td>
+<td align="right">23</td>
+<td align="right">7</td>
+<td align="right">45</td>
+</tr>
+<tr class="odd">
+<td align="right">1975</td>
+<td align="right">0</td>
+<td align="right">27</td>
+<td align="right">19</td>
+<td align="right">12</td>
+<td align="right">58</td>
+</tr>
+<tr class="even">
+<td align="right">1976</td>
+<td align="right">0</td>
+<td align="right">41</td>
+<td align="right">40</td>
+<td align="right">8</td>
+<td align="right">89</td>
+</tr>
+<tr class="odd">
+<td align="right">1977</td>
+<td align="right">0</td>
+<td align="right">53</td>
+<td align="right">38</td>
+<td align="right">0</td>
+<td align="right">91</td>
+</tr>
+<tr class="even">
+<td align="right">1978</td>
+<td align="right">0</td>
+<td align="right">32</td>
+<td align="right">39</td>
+<td align="right">3</td>
+<td align="right">74</td>
+</tr>
+<tr class="odd">
+<td align="right">1979</td>
+<td align="right">0</td>
+<td align="right">46</td>
+<td align="right">61</td>
+<td align="right">0</td>
+<td align="right">107</td>
+</tr>
+<tr class="even">
+<td align="right">1980</td>
+<td align="right">0</td>
+<td align="right">39</td>
+<td align="right">28</td>
+<td align="right">4</td>
+<td align="right">71</td>
+</tr>
+<tr class="odd">
+<td align="right">1981</td>
+<td align="right">0</td>
+<td align="right">45</td>
+<td align="right">22</td>
+<td align="right">1</td>
+<td align="right">68</td>
+</tr>
+<tr class="even">
+<td align="right">1982</td>
+<td align="right">0</td>
+<td align="right">31</td>
+<td align="right">23</td>
+<td align="right">0</td>
+<td align="right">54</td>
+</tr>
+<tr class="odd">
+<td align="right">1983</td>
+<td align="right">0</td>
+<td align="right">15</td>
+<td align="right">69</td>
+<td align="right">32</td>
+<td align="right">116</td>
+</tr>
+<tr class="even">
+<td align="right">1984</td>
+<td align="right">0</td>
+<td align="right">32</td>
+<td align="right">73</td>
+<td align="right">18</td>
+<td align="right">123</td>
+</tr>
+<tr class="odd">
+<td align="right">1985</td>
+<td align="right">0</td>
+<td align="right">17</td>
+<td align="right">65</td>
+<td align="right">21</td>
+<td align="right">103</td>
+</tr>
+<tr class="even">
+<td align="right">1986</td>
+<td align="right">0</td>
+<td align="right">11</td>
+<td align="right">59</td>
+<td align="right">15</td>
+<td align="right">85</td>
+</tr>
+<tr class="odd">
+<td align="right">1987</td>
+<td align="right">0</td>
+<td align="right">18</td>
+<td align="right">53</td>
+<td align="right">10</td>
+<td align="right">81</td>
+</tr>
+<tr class="even">
+<td align="right">1988</td>
+<td align="right">0</td>
+<td align="right">21</td>
+<td align="right">34</td>
+<td align="right">7</td>
+<td align="right">62</td>
+</tr>
+<tr class="odd">
+<td align="right">1989</td>
+<td align="right">0</td>
+<td align="right">22</td>
+<td align="right">50</td>
+<td align="right">13</td>
+<td align="right">85</td>
+</tr>
+<tr class="even">
+<td align="right">1990</td>
+<td align="right">0</td>
+<td align="right">18</td>
+<td align="right">29</td>
+<td align="right">11</td>
+<td align="right">58</td>
+</tr>
+<tr class="odd">
+<td align="right">1991</td>
+<td align="right">0</td>
+<td align="right">13</td>
+<td align="right">25</td>
+<td align="right">19</td>
+<td align="right">57</td>
+</tr>
+<tr class="even">
+<td align="right">1992</td>
+<td align="right">0</td>
+<td align="right">10</td>
+<td align="right">27</td>
+<td align="right">20</td>
+<td align="right">57</td>
+</tr>
+<tr class="odd">
+<td align="right">1993</td>
+<td align="right">0</td>
+<td align="right">16</td>
+<td align="right">30</td>
+<td align="right">25</td>
+<td align="right">71</td>
+</tr>
+<tr class="even">
+<td align="right">1994</td>
+<td align="right">0</td>
+<td align="right">11</td>
+<td align="right">24</td>
+<td align="right">5</td>
+<td align="right">40</td>
+</tr>
+<tr class="odd">
+<td align="right">1995</td>
+<td align="right">0</td>
+<td align="right">21</td>
+<td align="right">31</td>
+<td align="right">14</td>
+<td align="right">66</td>
+</tr>
+<tr class="even">
+<td align="right">1996</td>
+<td align="right">0</td>
+<td align="right">16</td>
+<td align="right">30</td>
+<td align="right">2</td>
+<td align="right">48</td>
+</tr>
+<tr class="odd">
+<td align="right">1997</td>
+<td align="right">0</td>
+<td align="right">16</td>
+<td align="right">25</td>
+<td align="right">7</td>
+<td align="right">48</td>
+</tr>
+<tr class="even">
+<td align="right">1998</td>
+<td align="right">0</td>
+<td align="right">17</td>
+<td align="right">30</td>
+<td align="right">5</td>
+<td align="right">52</td>
+</tr>
+<tr class="odd">
+<td align="right">1999</td>
+<td align="right">0</td>
+<td align="right">15</td>
+<td align="right">36</td>
+<td align="right">2</td>
+<td align="right">53</td>
+</tr>
+<tr class="even">
+<td align="right">2000</td>
+<td align="right">0</td>
+<td align="right">25</td>
+<td align="right">20</td>
+<td align="right">7</td>
+<td align="right">52</td>
+</tr>
+<tr class="odd">
+<td align="right">2001</td>
+<td align="right">0</td>
+<td align="right">17</td>
+<td align="right">36</td>
+<td align="right">13</td>
+<td align="right">66</td>
+</tr>
+<tr class="even">
+<td align="right">2002</td>
+<td align="right">0</td>
+<td align="right">21</td>
+<td align="right">33</td>
+<td align="right">4</td>
+<td align="right">58</td>
+</tr>
+<tr class="odd">
+<td align="right">2003</td>
+<td align="right">0</td>
+<td align="right">23</td>
+<td align="right">38</td>
+<td align="right">17</td>
+<td align="right">78</td>
+</tr>
+<tr class="even">
+<td align="right">2004</td>
+<td align="right">0</td>
+<td align="right">29</td>
+<td align="right">23</td>
+<td align="right">19</td>
+<td align="right">71</td>
+</tr>
+<tr class="odd">
+<td align="right">2005</td>
+<td align="right">1</td>
+<td align="right">23</td>
+<td align="right">44</td>
+<td align="right">40</td>
+<td align="right">108</td>
+</tr>
+<tr class="even">
+<td align="right">2006</td>
+<td align="right">0</td>
+<td align="right">26</td>
+<td align="right">60</td>
+<td align="right">42</td>
+<td align="right">128</td>
+</tr>
+<tr class="odd">
+<td align="right">2007</td>
+<td align="right">0</td>
+<td align="right">23</td>
+<td align="right">62</td>
+<td align="right">41</td>
+<td align="right">126</td>
+</tr>
+<tr class="even">
+<td align="right">2008</td>
+<td align="right">0</td>
+<td align="right">22</td>
+<td align="right">38</td>
+<td align="right">13</td>
+<td align="right">73</td>
+</tr>
+<tr class="odd">
+<td align="right">2009</td>
+<td align="right">0</td>
+<td align="right">24</td>
+<td align="right">46</td>
+<td align="right">23</td>
+<td align="right">93</td>
+</tr>
+<tr class="even">
+<td align="right">2010</td>
+<td align="right">0</td>
+<td align="right">17</td>
+<td align="right">51</td>
+<td align="right">66</td>
+<td align="right">134</td>
+</tr>
+<tr class="odd">
+<td align="right">2011</td>
+<td align="right">0</td>
+<td align="right">17</td>
+<td align="right">31</td>
+<td align="right">20</td>
+<td align="right">68</td>
+</tr>
+<tr class="even">
+<td align="right">2012</td>
+<td align="right">0</td>
+<td align="right">10</td>
+<td align="right">33</td>
+<td align="right">17</td>
+<td align="right">60</td>
+</tr>
+<tr class="odd">
+<td align="right">2013</td>
+<td align="right">0</td>
+<td align="right">10</td>
+<td align="right">23</td>
+<td align="right">3</td>
+<td align="right">36</td>
+</tr>
+<tr class="even">
+<td align="right">2014</td>
+<td align="right">0</td>
+<td align="right">12</td>
+<td align="right">18</td>
+<td align="right">16</td>
+<td align="right">46</td>
+</tr>
+<tr class="odd">
+<td align="right">2015</td>
+<td align="right">0</td>
+<td align="right">20</td>
+<td align="right">16</td>
+<td align="right">6</td>
+<td align="right">42</td>
+</tr>
+<tr class="even">
+<td align="right">2016</td>
+<td align="right">0</td>
+<td align="right">21</td>
+<td align="right">24</td>
+<td align="right">12</td>
+<td align="right">57</td>
+</tr>
+<tr class="odd">
+<td align="right">2017</td>
+<td align="right">0</td>
+<td align="right">15</td>
+<td align="right">47</td>
+<td align="right">10</td>
+<td align="right">72</td>
+</tr>
+<tr class="even">
+<td align="right">2018</td>
+<td align="right">0</td>
+<td align="right">13</td>
+<td align="right">44</td>
+<td align="right">5</td>
+<td align="right">62</td>
+</tr>
+<tr class="odd">
+<td align="right">2019</td>
+<td align="right">49</td>
+<td align="right">26</td>
+<td align="right">116</td>
+<td align="right">4</td>
+<td align="right">195</td>
+</tr>
+<tr class="even">
+<td align="right">2020</td>
+<td align="right">0</td>
+<td align="right">8</td>
+<td align="right">63</td>
+<td align="right">9</td>
+<td align="right">80</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="region-2" class="section level3">
+<h3><span class="header-section-number">4.1.3</span> region</h3>
+<pre class="r"><code>dfr &lt;- ddply(df,c(&#39;year&#39;,&#39;region&#39;),summarise,N=length(unique(id)),n=sum(n))
+dfr &lt;- dcast(dfr,year~region,value.var=&#39;N&#39;,fill = 0)
+dfr$total &lt;- rowSums(dfr[,-1])
+kable(dfr)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">year</th>
+<th align="right">eNL</th>
+<th align="right">nGSL</th>
+<th align="right">sGSL</th>
+<th align="right">sNL</th>
+<th align="right">SS</th>
+<th align="right">wNL</th>
+<th align="right">NA</th>
+<th align="right">total</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1973</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">39</td>
+<td align="right">0</td>
+<td align="right">58</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">97</td>
+</tr>
+<tr class="even">
+<td align="right">1974</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">9</td>
+<td align="right">0</td>
+<td align="right">36</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">45</td>
+</tr>
+<tr class="odd">
+<td align="right">1975</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">19</td>
+<td align="right">0</td>
+<td align="right">39</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">58</td>
+</tr>
+<tr class="even">
+<td align="right">1976</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">31</td>
+<td align="right">0</td>
+<td align="right">58</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">89</td>
+</tr>
+<tr class="odd">
+<td align="right">1977</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">34</td>
+<td align="right">0</td>
+<td align="right">57</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">91</td>
+</tr>
+<tr class="even">
+<td align="right">1978</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">36</td>
+<td align="right">0</td>
+<td align="right">38</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">74</td>
+</tr>
+<tr class="odd">
+<td align="right">1979</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">71</td>
+<td align="right">0</td>
+<td align="right">36</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">107</td>
+</tr>
+<tr class="even">
+<td align="right">1980</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">41</td>
+<td align="right">0</td>
+<td align="right">30</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">71</td>
+</tr>
+<tr class="odd">
+<td align="right">1981</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">37</td>
+<td align="right">0</td>
+<td align="right">31</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">68</td>
+</tr>
+<tr class="even">
+<td align="right">1982</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">22</td>
+<td align="right">0</td>
+<td align="right">32</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">54</td>
+</tr>
+<tr class="odd">
+<td align="right">1983</td>
+<td align="right">51</td>
+<td align="right">0</td>
+<td align="right">23</td>
+<td align="right">5</td>
+<td align="right">13</td>
+<td align="right">24</td>
+<td align="right">0</td>
+<td align="right">116</td>
+</tr>
+<tr class="even">
+<td align="right">1984</td>
+<td align="right">44</td>
+<td align="right">0</td>
+<td align="right">58</td>
+<td align="right">3</td>
+<td align="right">11</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">123</td>
+</tr>
+<tr class="odd">
+<td align="right">1985</td>
+<td align="right">36</td>
+<td align="right">0</td>
+<td align="right">54</td>
+<td align="right">1</td>
+<td align="right">8</td>
+<td align="right">4</td>
+<td align="right">0</td>
+<td align="right">103</td>
+</tr>
+<tr class="even">
+<td align="right">1986</td>
+<td align="right">39</td>
+<td align="right">1</td>
+<td align="right">38</td>
+<td align="right">4</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">0</td>
+<td align="right">85</td>
+</tr>
+<tr class="odd">
+<td align="right">1987</td>
+<td align="right">19</td>
+<td align="right">0</td>
+<td align="right">35</td>
+<td align="right">2</td>
+<td align="right">9</td>
+<td align="right">16</td>
+<td align="right">0</td>
+<td align="right">81</td>
+</tr>
+<tr class="even">
+<td align="right">1988</td>
+<td align="right">18</td>
+<td align="right">0</td>
+<td align="right">26</td>
+<td align="right">4</td>
+<td align="right">5</td>
+<td align="right">9</td>
+<td align="right">0</td>
+<td align="right">62</td>
+</tr>
+<tr class="odd">
+<td align="right">1989</td>
+<td align="right">25</td>
+<td align="right">0</td>
+<td align="right">39</td>
+<td align="right">4</td>
+<td align="right">9</td>
+<td align="right">8</td>
+<td align="right">0</td>
+<td align="right">85</td>
+</tr>
+<tr class="even">
+<td align="right">1990</td>
+<td align="right">11</td>
+<td align="right">0</td>
+<td align="right">31</td>
+<td align="right">1</td>
+<td align="right">6</td>
+<td align="right">9</td>
+<td align="right">0</td>
+<td align="right">58</td>
+</tr>
+<tr class="odd">
+<td align="right">1991</td>
+<td align="right">6</td>
+<td align="right">0</td>
+<td align="right">26</td>
+<td align="right">4</td>
+<td align="right">4</td>
+<td align="right">17</td>
+<td align="right">0</td>
+<td align="right">57</td>
+</tr>
+<tr class="even">
+<td align="right">1992</td>
+<td align="right">9</td>
+<td align="right">0</td>
+<td align="right">27</td>
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">19</td>
+<td align="right">0</td>
+<td align="right">57</td>
+</tr>
+<tr class="odd">
+<td align="right">1993</td>
+<td align="right">13</td>
+<td align="right">0</td>
+<td align="right">32</td>
+<td align="right">2</td>
+<td align="right">9</td>
+<td align="right">15</td>
+<td align="right">0</td>
+<td align="right">71</td>
+</tr>
+<tr class="even">
+<td align="right">1994</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">27</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">10</td>
+<td align="right">0</td>
+<td align="right">40</td>
+</tr>
+<tr class="odd">
+<td align="right">1995</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">41</td>
+<td align="right">0</td>
+<td align="right">12</td>
+<td align="right">11</td>
+<td align="right">0</td>
+<td align="right">66</td>
+</tr>
+<tr class="even">
+<td align="right">1996</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">28</td>
+<td align="right">0</td>
+<td align="right">7</td>
+<td align="right">12</td>
+<td align="right">0</td>
+<td align="right">48</td>
+</tr>
+<tr class="odd">
+<td align="right">1997</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">41</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">48</td>
+</tr>
+<tr class="even">
+<td align="right">1998</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">44</td>
+<td align="right">0</td>
+<td align="right">8</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">52</td>
+</tr>
+<tr class="odd">
+<td align="right">1999</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">43</td>
+<td align="right">0</td>
+<td align="right">9</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">53</td>
+</tr>
+<tr class="even">
+<td align="right">2000</td>
+<td align="right">4</td>
+<td align="right">0</td>
+<td align="right">36</td>
+<td align="right">0</td>
+<td align="right">10</td>
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">52</td>
+</tr>
+<tr class="odd">
+<td align="right">2001</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">39</td>
+<td align="right">0</td>
+<td align="right">11</td>
+<td align="right">14</td>
+<td align="right">0</td>
+<td align="right">66</td>
+</tr>
+<tr class="even">
+<td align="right">2002</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">40</td>
+<td align="right">0</td>
+<td align="right">7</td>
+<td align="right">11</td>
+<td align="right">0</td>
+<td align="right">58</td>
+</tr>
+<tr class="odd">
+<td align="right">2003</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">42</td>
+<td align="right">0</td>
+<td align="right">16</td>
+<td align="right">20</td>
+<td align="right">0</td>
+<td align="right">78</td>
+</tr>
+<tr class="even">
+<td align="right">2004</td>
+<td align="right">6</td>
+<td align="right">0</td>
+<td align="right">34</td>
+<td align="right">0</td>
+<td align="right">21</td>
+<td align="right">10</td>
+<td align="right">0</td>
+<td align="right">71</td>
+</tr>
+<tr class="odd">
+<td align="right">2005</td>
+<td align="right">28</td>
+<td align="right">1</td>
+<td align="right">47</td>
+<td align="right">2</td>
+<td align="right">18</td>
+<td align="right">12</td>
+<td align="right">0</td>
+<td align="right">108</td>
+</tr>
+<tr class="even">
+<td align="right">2006</td>
+<td align="right">51</td>
+<td align="right">1</td>
+<td align="right">51</td>
+<td align="right">3</td>
+<td align="right">8</td>
+<td align="right">14</td>
+<td align="right">0</td>
+<td align="right">128</td>
+</tr>
+<tr class="odd">
+<td align="right">2007</td>
+<td align="right">53</td>
+<td align="right">0</td>
+<td align="right">46</td>
+<td align="right">4</td>
+<td align="right">7</td>
+<td align="right">16</td>
+<td align="right">0</td>
+<td align="right">126</td>
+</tr>
+<tr class="even">
+<td align="right">2008</td>
+<td align="right">11</td>
+<td align="right">1</td>
+<td align="right">46</td>
+<td align="right">2</td>
+<td align="right">8</td>
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="right">73</td>
+</tr>
+<tr class="odd">
+<td align="right">2009</td>
+<td align="right">18</td>
+<td align="right">2</td>
+<td align="right">43</td>
+<td align="right">5</td>
+<td align="right">9</td>
+<td align="right">16</td>
+<td align="right">0</td>
+<td align="right">93</td>
+</tr>
+<tr class="even">
+<td align="right">2010</td>
+<td align="right">63</td>
+<td align="right">4</td>
+<td align="right">43</td>
+<td align="right">5</td>
+<td align="right">1</td>
+<td align="right">18</td>
+<td align="right">0</td>
+<td align="right">134</td>
+</tr>
+<tr class="odd">
+<td align="right">2011</td>
+<td align="right">14</td>
+<td align="right">3</td>
+<td align="right">29</td>
+<td align="right">6</td>
+<td align="right">1</td>
+<td align="right">15</td>
+<td align="right">0</td>
+<td align="right">68</td>
+</tr>
+<tr class="even">
+<td align="right">2012</td>
+<td align="right">14</td>
+<td align="right">3</td>
+<td align="right">27</td>
+<td align="right">3</td>
+<td align="right">0</td>
+<td align="right">13</td>
+<td align="right">0</td>
+<td align="right">60</td>
+</tr>
+<tr class="odd">
+<td align="right">2013</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">28</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="right">36</td>
+</tr>
+<tr class="even">
+<td align="right">2014</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">36</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">10</td>
+<td align="right">0</td>
+<td align="right">46</td>
+</tr>
+<tr class="odd">
+<td align="right">2015</td>
+<td align="right">3</td>
+<td align="right">1</td>
+<td align="right">37</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">42</td>
+</tr>
+<tr class="even">
+<td align="right">2016</td>
+<td align="right">5</td>
+<td align="right">2</td>
+<td align="right">43</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">57</td>
+</tr>
+<tr class="odd">
+<td align="right">2017</td>
+<td align="right">0</td>
+<td align="right">4</td>
+<td align="right">54</td>
+<td align="right">0</td>
+<td align="right">8</td>
+<td align="right">6</td>
+<td align="right">0</td>
+<td align="right">72</td>
+</tr>
+<tr class="even">
+<td align="right">2018</td>
+<td align="right">4</td>
+<td align="right">6</td>
+<td align="right">28</td>
+<td align="right">0</td>
+<td align="right">22</td>
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">62</td>
+</tr>
+<tr class="odd">
+<td align="right">2019</td>
+<td align="right">9</td>
+<td align="right">6</td>
+<td align="right">43</td>
+<td align="right">21</td>
+<td align="right">101</td>
+<td align="right">14</td>
+<td align="right">1</td>
+<td align="right">195</td>
+</tr>
+<tr class="even">
+<td align="right">2020</td>
+<td align="right">6</td>
+<td align="right">23</td>
+<td align="right">37</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">14</td>
+<td align="right">0</td>
+<td align="right">80</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="gear-2" class="section level3">
+<h3><span class="header-section-number">4.1.4</span> gear</h3>
+<pre class="r"><code>dfg &lt;- ddply(df,c(&#39;year&#39;,&#39;gear&#39;),summarise,N=length(unique(id)),n=sum(n))
+dfg &lt;- dcast(dfg,year~gear,value.var=&#39;N&#39;,fill = 0)
+dfg$total &lt;- rowSums(dfg[,-1])
+kable(dfg)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="right">year</th>
+<th align="right">Gillnets</th>
+<th align="right">Lines</th>
+<th align="right">Misc</th>
+<th align="right">Seines_Nets_Traps_Weirs</th>
+<th align="right">total</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">1973</td>
+<td align="right">29</td>
+<td align="right">9</td>
+<td align="right">1</td>
+<td align="right">58</td>
+<td align="right">97</td>
+</tr>
+<tr class="even">
+<td align="right">1974</td>
+<td align="right">11</td>
+<td align="right">4</td>
+<td align="right">1</td>
+<td align="right">29</td>
+<td align="right">45</td>
+</tr>
+<tr class="odd">
+<td align="right">1975</td>
+<td align="right">30</td>
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="right">23</td>
+<td align="right">58</td>
+</tr>
+<tr class="even">
+<td align="right">1976</td>
+<td align="right">23</td>
+<td align="right">10</td>
+<td align="right">0</td>
+<td align="right">56</td>
+<td align="right">89</td>
+</tr>
+<tr class="odd">
+<td align="right">1977</td>
+<td align="right">35</td>
+<td align="right">7</td>
+<td align="right">1</td>
+<td align="right">48</td>
+<td align="right">91</td>
+</tr>
+<tr class="even">
+<td align="right">1978</td>
+<td align="right">31</td>
+<td align="right">10</td>
+<td align="right">0</td>
+<td align="right">33</td>
+<td align="right">74</td>
+</tr>
+<tr class="odd">
+<td align="right">1979</td>
+<td align="right">61</td>
+<td align="right">16</td>
+<td align="right">1</td>
+<td align="right">29</td>
+<td align="right">107</td>
+</tr>
+<tr class="even">
+<td align="right">1980</td>
+<td align="right">56</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">14</td>
+<td align="right">71</td>
+</tr>
+<tr class="odd">
+<td align="right">1981</td>
+<td align="right">47</td>
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">19</td>
+<td align="right">68</td>
+</tr>
+<tr class="even">
+<td align="right">1982</td>
+<td align="right">34</td>
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">18</td>
+<td align="right">54</td>
+</tr>
+<tr class="odd">
+<td align="right">1983</td>
+<td align="right">48</td>
+<td align="right">12</td>
+<td align="right">0</td>
+<td align="right">56</td>
+<td align="right">116</td>
+</tr>
+<tr class="even">
+<td align="right">1984</td>
+<td align="right">59</td>
+<td align="right">41</td>
+<td align="right">0</td>
+<td align="right">23</td>
+<td align="right">123</td>
+</tr>
+<tr class="odd">
+<td align="right">1985</td>
+<td align="right">31</td>
+<td align="right">36</td>
+<td align="right">0</td>
+<td align="right">36</td>
+<td align="right">103</td>
+</tr>
+<tr class="even">
+<td align="right">1986</td>
+<td align="right">26</td>
+<td align="right">21</td>
+<td align="right">0</td>
+<td align="right">38</td>
+<td align="right">85</td>
+</tr>
+<tr class="odd">
+<td align="right">1987</td>
+<td align="right">28</td>
+<td align="right">20</td>
+<td align="right">0</td>
+<td align="right">33</td>
+<td align="right">81</td>
+</tr>
+<tr class="even">
+<td align="right">1988</td>
+<td align="right">28</td>
+<td align="right">10</td>
+<td align="right">0</td>
+<td align="right">24</td>
+<td align="right">62</td>
+</tr>
+<tr class="odd">
+<td align="right">1989</td>
+<td align="right">32</td>
+<td align="right">18</td>
+<td align="right">0</td>
+<td align="right">35</td>
+<td align="right">85</td>
+</tr>
+<tr class="even">
+<td align="right">1990</td>
+<td align="right">24</td>
+<td align="right">17</td>
+<td align="right">0</td>
+<td align="right">17</td>
+<td align="right">58</td>
+</tr>
+<tr class="odd">
+<td align="right">1991</td>
+<td align="right">22</td>
+<td align="right">11</td>
+<td align="right">0</td>
+<td align="right">24</td>
+<td align="right">57</td>
+</tr>
+<tr class="even">
+<td align="right">1992</td>
+<td align="right">19</td>
+<td align="right">10</td>
+<td align="right">0</td>
+<td align="right">28</td>
+<td align="right">57</td>
+</tr>
+<tr class="odd">
+<td align="right">1993</td>
+<td align="right">30</td>
+<td align="right">15</td>
+<td align="right">0</td>
+<td align="right">26</td>
+<td align="right">71</td>
+</tr>
+<tr class="even">
+<td align="right">1994</td>
+<td align="right">14</td>
+<td align="right">14</td>
+<td align="right">1</td>
+<td align="right">11</td>
+<td align="right">40</td>
+</tr>
+<tr class="odd">
+<td align="right">1995</td>
+<td align="right">30</td>
+<td align="right">20</td>
+<td align="right">2</td>
+<td align="right">14</td>
+<td align="right">66</td>
+</tr>
+<tr class="even">
+<td align="right">1996</td>
+<td align="right">19</td>
+<td align="right">15</td>
+<td align="right">2</td>
+<td align="right">12</td>
+<td align="right">48</td>
+</tr>
+<tr class="odd">
+<td align="right">1997</td>
+<td align="right">22</td>
+<td align="right">20</td>
+<td align="right">0</td>
+<td align="right">6</td>
+<td align="right">48</td>
+</tr>
+<tr class="even">
+<td align="right">1998</td>
+<td align="right">30</td>
+<td align="right">19</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">52</td>
+</tr>
+<tr class="odd">
+<td align="right">1999</td>
+<td align="right">16</td>
+<td align="right">28</td>
+<td align="right">0</td>
+<td align="right">9</td>
+<td align="right">53</td>
+</tr>
+<tr class="even">
+<td align="right">2000</td>
+<td align="right">23</td>
+<td align="right">17</td>
+<td align="right">0</td>
+<td align="right">12</td>
+<td align="right">52</td>
+</tr>
+<tr class="odd">
+<td align="right">2001</td>
+<td align="right">24</td>
+<td align="right">22</td>
+<td align="right">0</td>
+<td align="right">20</td>
+<td align="right">66</td>
+</tr>
+<tr class="even">
+<td align="right">2002</td>
+<td align="right">19</td>
+<td align="right">21</td>
+<td align="right">0</td>
+<td align="right">18</td>
+<td align="right">58</td>
+</tr>
+<tr class="odd">
+<td align="right">2003</td>
+<td align="right">22</td>
+<td align="right">32</td>
+<td align="right">0</td>
+<td align="right">24</td>
+<td align="right">78</td>
+</tr>
+<tr class="even">
+<td align="right">2004</td>
+<td align="right">18</td>
+<td align="right">21</td>
+<td align="right">0</td>
+<td align="right">32</td>
+<td align="right">71</td>
+</tr>
+<tr class="odd">
+<td align="right">2005</td>
+<td align="right">23</td>
+<td align="right">30</td>
+<td align="right">2</td>
+<td align="right">53</td>
+<td align="right">108</td>
+</tr>
+<tr class="even">
+<td align="right">2006</td>
+<td align="right">23</td>
+<td align="right">35</td>
+<td align="right">2</td>
+<td align="right">68</td>
+<td align="right">128</td>
+</tr>
+<tr class="odd">
+<td align="right">2007</td>
+<td align="right">19</td>
+<td align="right">32</td>
+<td align="right">9</td>
+<td align="right">66</td>
+<td align="right">126</td>
+</tr>
+<tr class="even">
+<td align="right">2008</td>
+<td align="right">17</td>
+<td align="right">32</td>
+<td align="right">1</td>
+<td align="right">23</td>
+<td align="right">73</td>
+</tr>
+<tr class="odd">
+<td align="right">2009</td>
+<td align="right">20</td>
+<td align="right">30</td>
+<td align="right">1</td>
+<td align="right">42</td>
+<td align="right">93</td>
+</tr>
+<tr class="even">
+<td align="right">2010</td>
+<td align="right">22</td>
+<td align="right">33</td>
+<td align="right">13</td>
+<td align="right">66</td>
+<td align="right">134</td>
+</tr>
+<tr class="odd">
+<td align="right">2011</td>
+<td align="right">25</td>
+<td align="right">17</td>
+<td align="right">0</td>
+<td align="right">26</td>
+<td align="right">68</td>
+</tr>
+<tr class="even">
+<td align="right">2012</td>
+<td align="right">25</td>
+<td align="right">25</td>
+<td align="right">0</td>
+<td align="right">10</td>
+<td align="right">60</td>
+</tr>
+<tr class="odd">
+<td align="right">2013</td>
+<td align="right">9</td>
+<td align="right">19</td>
+<td align="right">0</td>
+<td align="right">8</td>
+<td align="right">36</td>
+</tr>
+<tr class="even">
+<td align="right">2014</td>
+<td align="right">12</td>
+<td align="right">24</td>
+<td align="right">0</td>
+<td align="right">10</td>
+<td align="right">46</td>
+</tr>
+<tr class="odd">
+<td align="right">2015</td>
+<td align="right">19</td>
+<td align="right">18</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">42</td>
+</tr>
+<tr class="even">
+<td align="right">2016</td>
+<td align="right">20</td>
+<td align="right">23</td>
+<td align="right">0</td>
+<td align="right">14</td>
+<td align="right">57</td>
+</tr>
+<tr class="odd">
+<td align="right">2017</td>
+<td align="right">17</td>
+<td align="right">37</td>
+<td align="right">8</td>
+<td align="right">10</td>
+<td align="right">72</td>
+</tr>
+<tr class="even">
+<td align="right">2018</td>
+<td align="right">8</td>
+<td align="right">28</td>
+<td align="right">0</td>
+<td align="right">26</td>
+<td align="right">62</td>
+</tr>
+<tr class="odd">
+<td align="right">2019</td>
+<td align="right">33</td>
+<td align="right">33</td>
+<td align="right">99</td>
+<td align="right">30</td>
+<td align="right">195</td>
+</tr>
+<tr class="even">
+<td align="right">2020</td>
+<td align="right">15</td>
+<td align="right">18</td>
+<td align="right">40</td>
+<td align="right">7</td>
+<td align="right">80</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="plots-1" class="section level2 tabset">
+<h2><span class="header-section-number">4.2</span> PLOTS</h2>
+<pre class="r"><code>df &lt;- bio.caa
+df$id &lt;- with(df,paste(sample.id,year,period,region,gear),collapse=&#39;.&#39;)</code></pre>
+<div id="period-3" class="section level3">
+<h3><span class="header-section-number">4.2.1</span> period</h3>
+<pre class="r"><code>dfp &lt;- ddply(df,c(&#39;year&#39;,&#39;period&#39;),summarise,N=length(unique(id)),n=length(id))
+grid.arrange(ggplot(dfp,aes(x=year,y=N,fill=period))+geom_bar(stat=&#39;identity&#39;)+scale_fill_viridis_c(),
+             ggplot(dfp,aes(x=year,y=n,fill=period))+geom_bar(stat=&#39;identity&#39;)+scale_fill_viridis_c(),ncol=1)</code></pre>
+<p><img src="3.0_caa_files/figure-html/al_samples_period-1.png" width="864" style="display: block; margin: auto;" /></p>
+</div>
+<div id="region-3" class="section level3">
+<h3><span class="header-section-number">4.2.2</span> region</h3>
+<pre class="r"><code>dfr &lt;- ddply(df,c(&#39;year&#39;,&#39;region&#39;),summarise,N=length(unique(id)),n=length(id))
+grid.arrange(ggplot(dfr,aes(x=year,y=N,fill=region))+geom_bar(stat=&#39;identity&#39;)+scale_fill_viridis_d(),
+             ggplot(dfr,aes(x=year,y=n,fill=region))+geom_bar(stat=&#39;identity&#39;)+scale_fill_viridis_d(),ncol=1)</code></pre>
+<p><img src="3.0_caa_files/figure-html/al_samples_region-1.png" width="864" style="display: block; margin: auto;" /></p>
+</div>
+<div id="gear-3" class="section level3">
+<h3><span class="header-section-number">4.2.3</span> gear</h3>
+<pre class="r"><code>dfg &lt;- ddply(df,c(&#39;year&#39;,&#39;gear&#39;),summarise,N=length(unique(id)),n=length(id))
+grid.arrange(ggplot(dfg,aes(x=year,y=N,fill=gear))+geom_bar(stat=&#39;identity&#39;)+scale_fill_viridis_d(),
+             ggplot(dfg,aes(x=year,y=n,fill=gear))+geom_bar(stat=&#39;identity&#39;)+scale_fill_viridis_d(),ncol=1)</code></pre>
+<p><img src="3.0_caa_files/figure-html/al_samples_gear-1.png" width="864" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+</div>
+<div id="catch-data" class="section level1">
+<h1><span class="header-section-number">5</span> CATCH DATA</h1>
+<pre class="r"><code>catch &lt;- catch[,c(&#39;year&#39;,&#39;month&#39;,&#39;nafo&#39;,&#39;gear.cat&#39;,&#39;source&#39;,&#39;catch&#39;)]
+
+## identify period, region and gear
+# 1) PERIOD: quarters
+catch$period &lt;- ceiling(catch$month/3)
+
+# 2) REGION: large scale regions 
+catch$region &lt;- group.region[match(catch$nafo,group.region$nafo),&#39;region&#39;]
+
+# 3) GEAR: similar selectivity gears
+catch$gear &lt;- group.gear[match(catch$gear.cat,group.gear$gear.cat),&#39;gear.group&#39;]
+
+## total catch by level
+catch.caa &lt;- ddply(catch,c(&#39;year&#39;,&#39;region&#39;,&#39;period&#39;,&#39;gear&#39;),summarise,catch=sum(catch,na.rm = T))
+catch.caa &lt;- catch.caa[catch.caa$catch&gt;0,]
+
+save(catch.caa, file =  paste0(dir.rdat, &quot;catch.caa.Rdata&quot;))</code></pre>
+<div id="plots-2" class="section level2 tabset">
+<h2><span class="header-section-number">5.1</span> PLOTS</h2>
+<div id="region-4" class="section level3">
+<h3><span class="header-section-number">5.1.1</span> region</h3>
+<pre class="r"><code>plotCatch(catch.caa,x=&#39;year&#39;,y=&#39;catch&#39;,fill=&#39;region&#39;)+scale_fill_viridis_d(na.value = &quot;grey50&quot;)</code></pre>
+<p><img src="3.0_caa_files/figure-html/catch_region-1.png" width="864" style="display: block; margin: auto;" /></p>
+</div>
+<div id="gear-4" class="section level3">
+<h3><span class="header-section-number">5.1.2</span> gear</h3>
+<pre class="r"><code>plotCatch(catch.caa,x=&#39;year&#39;,y=&#39;catch&#39;,fill=&#39;gear&#39;)+scale_fill_viridis_d(na.value = &quot;grey50&quot;)</code></pre>
+<p><img src="3.0_caa_files/figure-html/catch_gear-1.png" width="864" style="display: block; margin: auto;" /></p>
+</div>
+<div id="period-4" class="section level3">
+<h3><span class="header-section-number">5.1.3</span> period</h3>
+<pre class="r"><code>plotCatch(catch.caa,x=&#39;year&#39;,y=&#39;catch&#39;,fill=&#39;period&#39;)+scale_fill_viridis_d(na.value = &quot;grey50&quot;)</code></pre>
+<p><img src="3.0_caa_files/figure-html/catch_period-1.png" width="864" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+</div>
+<div id="catch-at-age" class="section level1">
+<h1><span class="header-section-number">6</span> CATCH-AT-AGE</h1>
+<pre class="r"><code>catch.diffusedR &lt;- paste0(dir.rdat, &quot;catch.diffused.Rdata&quot;)
+caaR &lt;- paste0(dir.rdat, &quot;caa.Rdata&quot;)
+  
+if(!all(file.exists(c(catch.diffusedR,caaR)))){
+    # step 1) get samples
+    lf.caa[,which(names(lf.caa) %in% names(lw.mod)[-c(1:2)])] &lt;- NULL   # remove model details
+    
+    years &lt;- my.year[my.year&gt;=1976]                           # no lf prior to this year
+    catch.caa &lt;- catch.caa[catch.caa$year %in% years,]        # years for which lf
+    lf.caa &lt;- lf.caa[lf.caa$year %in% years,]                 # years for which lf
+    bio.caa &lt;- bio.caa[bio.caa$year %in% years,]              # years for which lf
+    
+    catch.diffused &lt;- get.samples(catch=catch.caa,
+                       lf=lf.caa, 
+                       al=bio.caa,
+                       tresh.lf=2,          # min samples for length-frequency
+                       tresh.al=2,          # min samples for age-length key
+                       period.unit=&#39;quarter&#39;)   # quarterly grouping instead of monthly
+
+    catch.diffused$age.0 &lt;- NULL                # remove age 0 (total landings somewhat smaller)
+    save(catch.diffused, file =  catch.diffusedR)
+    
+    # step 2) get actual caa
+    caa &lt;- get.caa(catch.diffused,plus=10)
+    save(caa, file =  caaR)     
+}else{ 
+    load(catch.diffusedR)
+    load(caaR)
+}</code></pre>
+<div id="check-2" class="section level2 tabset">
+<h2><span class="header-section-number">6.1</span> CHECK</h2>
+<div id="samples" class="section level3">
+<h3><span class="header-section-number">6.1.1</span> samples</h3>
+<pre class="r"><code>check &lt;- ddply(catch.diffused,c(&#39;id&#39;,&#39;year&#39;,&#39;catch&#39;),summarise,
+               option.lengthfreq=unique(option.lengthfreq),
+               nsample.lengthfreq=unique(nsample.lengthfreq),
+               nfish.lengthfreq=sum(n.lf),
+               option.agelength=unique(option.agelength),
+               nsample.agelength=unique(nsample.agelength),
+               nfish.agekey=sum(n.agekey))
+check &lt;- reshape::melt(check,id=c(&#39;id&#39;,&#39;year&#39;,&#39;catch&#39;))
+ggplot(check,aes(x=value,fill=catch))+geom_histogram(bins=30,)+facet_wrap(~variable,scale=&#39;free&#39;)</code></pre>
+<p><img src="3.0_caa_files/figure-html/caa_check_samples-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="samples-annual" class="section level3">
+<h3><span class="header-section-number">6.1.2</span> samples annual</h3>
+<pre class="r"><code>ggplot(check,aes(x=year,y=value,group=year))+geom_boxplot()+facet_wrap(~variable,scale=&#39;free_y&#39;)</code></pre>
+<p><img src="3.0_caa_files/figure-html/caa_check_samples_annual-1.png" width="1152" style="display: block; margin: auto;" /></p>
+</div>
+<div id="total" class="section level3">
+<h3><span class="header-section-number">6.1.3</span> total</h3>
+<pre class="r"><code>tot &lt;- ddply(catch.caa,c(&#39;year&#39;),summarise,catch=sum(catch))
+ggplot(caa,aes(x=year))+
+  geom_bar(stat=&#39;identity&#39;,aes(y=caaw,fill=age))+
+  geom_line(data=tot,aes(y=catch))+
+  scale_fill_viridis()</code></pre>
+<p><img src="3.0_caa_files/figure-html/caa_check_total-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="plots-3" class="section level2 tabset">
+<h2><span class="header-section-number">6.2</span> PLOTS</h2>
+<div id="caan" class="section level3">
+<h3><span class="header-section-number">6.2.1</span> CAAN</h3>
+<pre class="r"><code>ggplot(caa,aes(x=year,y=age))+
+  geom_point(alpha=0.8,aes(size=caan))+ 
+  scale_size(range = c(1,12))+
+  scale_y_continuous(breaks=min(caa$age):max(caa$age))</code></pre>
+<p><img src="3.0_caa_files/figure-html/caan_plot-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="caaw" class="section level3">
+<h3><span class="header-section-number">6.2.2</span> CAAW</h3>
+<pre class="r"><code>ggplot(caa,aes(x=year,y=age))+
+  geom_point(alpha=0.8,aes(size=caaw))+
+  scale_size(range = c(1,12))+
+  scale_y_continuous(breaks=min(caa$age):max(caa$age))</code></pre>
+<p><img src="3.0_caa_files/figure-html/caaw_plot-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="waa" class="section level3">
+<h3><span class="header-section-number">6.2.3</span> WAA</h3>
+<p>The large dip in 1984 is an artifact because of a mis-match between the length and bio samples. When a relatively large fraction of the catch has a length-frequency that includes small fish but no such small fish are present in the selected bio samples (ALK), the current gap filling algorithm classifies them, possibly wrongly, as the youngest age in the ALK (e.g., age 4).</p>
+<p>This also biases CAA.</p>
+<p>A rule would need to be added to look for such mis-matches (any class could be ‘missing’) and to apply a correction. See the hybrid approach from Ailloud 2019. For instance, make overall ALK with sd and if there is x% probability (CI from ALKglobal) the length is in an age class that was not in the ALK, add more samples or so.</p>
+<p>I expect this might also be why I overestimate CAA of age 1 relative to CATCH.EXE?</p>
+<pre class="r"><code>ggplot(caa,aes(x=year,y=waa,group=age))+
+    geom_line(aes(color=age),size=1)+
+    scale_color_viridis()
+## Warning: Removed 8 row(s) containing missing values (geom_path).</code></pre>
+<p><img src="3.0_caa_files/figure-html/waa_plot-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="laa" class="section level3">
+<h3><span class="header-section-number">6.2.4</span> LAA</h3>
+<pre class="r"><code>ggplot(caa,aes(x=year,y=laa,group=age))+
+    geom_line(aes(color=age),size=1)+
+    scale_color_viridis()
+## Warning: Removed 8 row(s) containing missing values (geom_path).</code></pre>
+<p><img src="3.0_caa_files/figure-html/laa_plot-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

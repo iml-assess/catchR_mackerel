@@ -1,0 +1,120 @@
+---
+title: "Catch-at-Length"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float:
+      collapsed: FALSE
+    code_folding: show
+    number_sections: TRUE
+---
+    
+# SET-UP
+```{r  markdown, echo=F}
+library(knitr)
+opts_chunk$set(echo = T, collapse = T, fig.align = "center", fig.width = 9, fig.height = 6)
+options(width = 140)
+```    
+
+## settings
+```{r settings, message = F}
+source('0.0_settings.R')
+library(ggridges)
+library(zoo)
+library(PerformanceAnalytics)
+```
+
+## load all data
+```{r data, message = F}
+# for lf by trimester
+load(paste0(dir.rdat, "catch.diffused.Rdata"))                          # from 3.0_caa
+load(paste0(dir.rdat, "catch.diffused.reg.Rdata"))                      # from 3.2_caa_region
+```
+
+# GLOBAL
+```{r cal overall, message = F, fig.height = 10,fig.width = 6}
+cal <- get.cal(catch.diffused)
+
+ggplot(cal) + 
+  geom_density_ridges(stat = "identity", 
+                      aes(x = length, y = year, height = percentage,group=year),alpha=0.6)+
+  scale_y_continuous(expand=c(0,0))+
+  theme_ridges()+
+  labs(y='',x='Length (cm)')+
+  scale_fill_viridis_d()
+```
+
+# REGIONAL
+```{r cal reg, message = F, fig.height = 10,fig.width = 10}
+cal.reg <- ddply(catch.diffused.reg,c('region'),function(x) get.cal(x))
+
+ggplot(cal.reg) + 
+  geom_density_ridges(stat = "identity", 
+                      aes(x = length, y = year, height = percentage, group=year,fill=region),alpha=0.6)+
+  scale_y_continuous(expand=c(0,0))+
+  facet_grid(~region)+
+  theme_ridges()+
+  labs(y='',x='Length (cm)')+
+  scale_fill_viridis_d()
+```
+
+#### PLOTS {.tabset}
+##### corelation
+Exploratory.
+Check of correlation (overall) between median sizes (rough measure).
+Also checked correlation over time (rolling window): uninteresting because insufficient years.
+```{r cal corr overall, fig.height = 6,fig.width = 8}
+cal <- ddply(cal.reg,c('year','region'),transform,med=median(rep.int(length,percentage*1000)))
+
+df <- as.data.frame.matrix(xtabs(med ~ year + region, unique(cal[,c('year','region','med')])))
+df[df==0] <- NA
+
+chart.Correlation(df, histogram=TRUE, pch=19)
+```
+
+##### lm
+Exploratory.
+```{r cal lm, fig.height = 2.5,fig.width = 3.5}
+regs <- c('sGSL','SS','eNL','wNL')
+df <- unique(cal[cal$region %in% regs,c('year','region','med')])
+df <- dcast(df,year~region,value.var='med')
+
+cross <- expand.grid(a=regs,b=regs)
+
+b <- apply(cross,1,function(d){
+  d <<- d
+  x <- df[,d[1]]
+  y <- df[,d[2]]
+  if(d[1]==d[2]) return(c(1,NA))
+  m <- robustbase::lmrob(formula = y ~ 0+x)
+  c(alpha=coef(m),p=summary(m)$coefficients[,4] )
+})
+out <- cbind(cross,t(b))
+names(out)[3:4] <- c('beta','p')
+
+pstar <- function(x){
+    lab <- rep('',length(x))
+    lab[x<0.1] <- '*'
+    lab[x<0.05] <- '**'
+    lab[x<0.01] <- '***'
+    lab
+}
+
+out$star <- pstar(out$p)
+reg.order <- unique(out[order(out$beta,decreasing = TRUE),'a'])
+out$a <-  factor(out$a,reg.order)
+out$b <-  factor(out$b,reg.order)
+out <- out[out$beta>=1,]
+
+ggplot(out,aes(x=a,y=b))+
+  geom_tile(aes(fill=beta))+
+  geom_text(data=out,aes(label=round(beta,2)))+
+  geom_text(data=out,aes(label=star),hjust=-0.7,vjust=-0.2)+
+  scale_fill_gradient2(low = 'darkred', mid = 'white', high = 'darkgreen',midpoint=1)+
+  theme(legend.position = 'none')+
+  scale_x_discrete(expand=c(0,0))+
+  scale_y_discrete(expand=c(0,0))+
+  labs(x='',y='')
+```

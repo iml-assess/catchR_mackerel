@@ -17,7 +17,7 @@ output:
 ```{r markdown, echo=F}
 library(knitr)
 opts_chunk$set(echo = T, collapse = T, fig.align = "center", fig.width = 9, fig.height = 6)
-options(width = 120)
+options(width = 140)
 ```    
 ## settings
 ```{r settings, message = F}
@@ -39,38 +39,42 @@ From the tables of length-frequencies/bio samples by region it is clear that ins
 Only keep eNL, wNL, sGSL and SS. Only the sGSL has samples each year.
 
 ```{r caa regional, message = F, fig.height = 6,fig.width = 8}
-caa.all.regR <- paste0(dir.rdat, "caa.all.reg.Rdata")
+catch.diffused.regR <- paste0(dir.rdat, "catch.diffused.reg.Rdata")
 caa.regR <- paste0(dir.rdat, "caa.reg.Rdata")
   
-these.regions <- c('SS','sGSL','wNL','eNL')
+these.regions <- c('SS','sGSL','wNL','eNL','sNL','nGSL')
 
-if(!all(file.exists(c(caa.all.regR,caa.regR)))){
+if(!all(file.exists(c(catch.diffused.regR,caa.regR)))){
     # step 1) get samples
   
-  caa.all.reg <- ldply(these.regions,function(x){
-        lf.reg <- lf.caa[lf.caa$region==x & !is.na(lf.caa$region),]
-        al.reg <- bio.caa[bio.caa$region==x & !is.na(bio.caa$region),]
-        ca.reg <- catch.caa[catch.caa$region==x & !is.na(catch.caa$region),]
+  catch.diffused.reg <- ldply(these.regions,function(x){
+    
+        years <- my.year[my.year>=1976 & my.year %in% unique(lf.caa[lf.caa$region==x,'year'])] 
+
+        lf.reg <- lf.caa[lf.caa$region==x & !is.na(lf.caa$region) & lf.caa$year %in% years,]
+        al.reg <- bio.caa[bio.caa$region==x & !is.na(bio.caa$region) & bio.caa$year %in% years,]
+        ca.reg <- catch.caa[catch.caa$region==x & !is.na(catch.caa$region) & catch.caa$year %in% years,]
                                               
-        caa.all <- caa.raw(catch=ca.reg,
+        catch.diffused <- get.samples(catch=ca.reg,
                            lf=lf.reg, 
                            al=al.reg,
                            tresh.lf=2,          # min samples for length-frequency
                            tresh.al=2,          # min samples for age-length key
                            period.unit='quarter')   # quarterly grouping instead of monthly
     
-        caa.all$X0 <- NULL                       # remove age 0 ?? (total landings somewhat smaller)
-        caa.all <- caa.all[caa.all$length!=-1,]  # remove instances where treshold not reached
-        return(caa.all)
+        catch.diffused$age.0 <- NULL                                             # remove age 0 ?? (total landings somewhat smaller)
+        catch.diffused <- catch.diffused[catch.diffused$length!=-1,]           # remove instances where threshold not reached (CAA will only represent part of catch; see checks later)
+        catch.diffused <- catch.diffused[catch.diffused$option.lengthfreq<7,]  # don't allow to take info neighboring years for length frequencies (but yes for age length)
+        return(catch.diffused)
   })
-  save(caa.all.reg, file =  caa.all.regR)
+  save(catch.diffused.reg, file =  catch.diffused.regR)
   
-  caa.reg <- ddply(caa.all.reg,c('region'),function(x){caa.clean(x,plus=10)})
+  caa.reg <- ddply(catch.diffused.reg,c('region'),function(x){get.caa(x,plus=10)})
 
   save(caa.reg, file =  caa.regR)
 }else{ 
     load(caa.regR)
-    load(caa.all.regR)
+    load(catch.diffused.regR)
 }
 
 ```
@@ -78,23 +82,24 @@ if(!all(file.exists(c(caa.all.regR,caa.regR)))){
 ## CHECK {.tabset}
 ### samples
 ```{r caa check samples, fig.height = 6,fig.width = 12}
-check <- ddply(caa.all.reg,c('id','region'),summarise,
+check <- ddply(catch.diffused.reg,c('id','region'),summarise,
                option.lengthfreq=unique(option.lengthfreq),
                nsample.lengthfreq=unique(nsample.lengthfreq),
                nfish.lengthfreq=sum(n.lf),
                option.agelength=unique(option.agelength),
                nsample.agelength=unique(nsample.agelength),
                nfish.agekey=sum(n.agekey))
-check <- melt(check,id=c('id','region'))
+check <- reshape2::melt(check,id=c('id','region'))
 ggplot(check,aes(x=value))+geom_histogram(bins=30)+facet_grid(region~variable,scale='free')  # region and gear can only rarely be matched
 ```
 
 ### total
-```{r caa check total, fig.height = 6,fig.width = 8}
+
+```{r caa check total, fig.height = 6,fig.width = 10}
 tot <- ddply(catch.caa[catch.caa$region %in% these.regions,],c('year','region'),summarise,catch=sum(catch))
 ggplot(caa.reg,aes(x=year))+
   geom_bar(stat='identity',aes(y=caaw,fill=age))+
-  geom_line(data=tot,aes(y=catch))+
+  geom_line(data=tot,aes(y=catch),size=1)+
   facet_wrap(~region,scale='free_y')+
   scale_fill_viridis()
 
@@ -105,7 +110,8 @@ ggplot(caa.reg,aes(x=year))+
 ```{r caan plot, message = F, fig.height = 6,fig.width = 12}
 ggplot(caa.reg,aes(x=year,y=age,size=caan))+
   geom_point(alpha=0.8)+ scale_size(range = c(1,10))+
-  facet_wrap(~region)
+  facet_wrap(~region,ncol=2)+
+  scale_y_continuous(breaks=min(caa.reg$age):max(caa.reg$age))
 ```
 
 ## CAAN rel
@@ -114,8 +120,9 @@ df <- caa.reg[!is.na(caa.reg$caan),]
 df <- ddply(df,c('year','region'),mutate,caan.rel=caan/max(caan))
 ggplot(df,aes(x=year,y=age,size=caan.rel))+
   geom_point(alpha=0.8)+ 
-  scale_size(range = c(1,7))+
-  facet_wrap(~region)
+  scale_size(range = c(1,6))+
+  facet_wrap(~region,ncol=2)+
+  scale_y_continuous(breaks=min(df$age):max(df$age))
 ```
 
 ## CAAN arrow
@@ -123,28 +130,39 @@ ggplot(df,aes(x=year,y=age,size=caan.rel))+
 df <- caa.reg[!is.na(caa.reg$caan),]
 df <- ddply(df,c('year','region'),mutate,caan.rel=caan/max(caan))
 
+# autodetermine cohorts
 m <- acast(df[df$region=='sGSL',],age~year,value.var = 'caan.rel')
 a <- cohort(m)
-a <- a[a$strength>=quantile(a$strength, 0.8, na.rm=TRUE),]   # 20% strongest years in the southern gulf
+a <- a[a$strength>=quantile(a$strength, 0.85, na.rm=TRUE),]   # 15% strongest years in the southern gulf
+a$year <- a$year + min(df$age)
 a$age <- min(df$age)
 a$agemax <- max(df$age)
 a$yearend <- a$year+max(df$age)-min(df$age)
-a$label <- a$year-min(df$age)
+a$label <- a$year-1
+
+# just select some myself
+a <- data.frame(year = c(1979, 1983, 1989, 2000), # four largest peaks according to assessment
+               age = c(5, 1, 1, 1), 
+               agemax = c(10, 10, 10, 10), 
+               yearend = c(1984,1992, 1998, 2009),
+               label = c(1978, 1982, 1988, 1999))
 
 ggplot(df,aes(x=year,y=age))+
   geom_point(alpha=0.8,aes(size=caan.rel))+ 
   scale_size(range = c(1,7))+
   facet_wrap(~region)+
-  geom_segment(data=a,aes(xend=yearend,yend=agemax),col='darkblue',size=1)+
-  geom_text(data=a,aes(x=yearend,y=agemax,label=label),col='darkblue',size=3,hjust=0,vjust=0)+
-  coord_cartesian(xlim=range(df$year))
+  geom_segment(data=a,aes(xend=yearend,yend=agemax),col='red',size=1)+
+  geom_text(data=a,aes(x=yearend,y=agemax,label=label),col='red',size=3,hjust=0,vjust=-1)+
+  coord_cartesian(xlim=range(df$year),clip='off')+
+  scale_y_continuous(breaks=min(caa.reg$age):max(caa.reg$age))
 ```
 
 ## CAAW
 ```{r caaw plot, message = F, fig.height = 6,fig.width = 16}
 ggplot(caa.reg,aes(x=year,y=age,size=caaw))+
   geom_point(alpha=0.8)+ scale_size(range = c(1,10))+
-  facet_wrap(~region)
+  facet_wrap(~region)+
+  scale_y_continuous(breaks=min(caa.reg$age):max(caa.reg$age))
 ```
 
 ## WAA

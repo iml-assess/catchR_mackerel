@@ -5,7 +5,8 @@ Makes use of the catchR package to
  * analyse this catch
  		- total
  		- catch-at-age
- 		-...
+ 		- weight-at-age in the catch
+ 		- length frequencies
 
 *under construction*
 

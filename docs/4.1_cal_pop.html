@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+<meta name="date" content="2021-03-17" />
+
+<title>Catch-at-Length (gear, region and time specific)</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Mackerel</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="0.0_settings.html">
+    <span class="fas fa-cogs"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="1.0_read.html">Data</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Landings
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="2.0_landings.html">Overview</a>
+    </li>
+    <li>
+      <a href="2.1_landings_comparison.html">Comparison</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    CAA
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="3.0_caa.html">Calculation</a>
+    </li>
+    <li>
+      <a href="3.1_caa_comparison.html">Comparison</a>
+    </li>
+    <li>
+      <a href="3.2_caa_region.html">Regional</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    CAL
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="4.0_cal.html">Overview</a>
+    </li>
+    <li>
+      <a href="4.1_cal_pop.html">Gear and Region specific</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Catch-at-Length (gear, region and time specific)</h1>
+<h4 class="date">2021-03-17</h4>
+
+</div>
+
+
+<p>Section CAL reflects the length frequencies in the total catches. They are dependent not only on the population’s size structure but also gear-type (selectivity), region (availability) and time (growth). To remove the ‘gear’ and ‘region’ effect this script looks at length-frequency data from a given gear in each region. Different time-scales are considered to address growth.</p>
+<div id="set-up" class="section level1">
+<h1><span class="header-section-number">1</span> SET-UP</h1>
+<div id="settings" class="section level2">
+<h2><span class="header-section-number">1.1</span> settings</h2>
+<pre class="r"><code>source(&#39;0.0_settings.R&#39;)
+library(ggridges)
+library(zoo)
+library(PerformanceAnalytics)</code></pre>
+</div>
+<div id="load-all-data" class="section level2">
+<h2><span class="header-section-number">1.2</span> load all data</h2>
+<pre class="r"><code># for lf by trimester
+load(paste0(dir.rdat, &quot;lf.caa.Rdata&quot;))                                  # from 3.0_caa
+load(paste0(dir.rdat, &quot;bio.Rdata&quot;))                                     # from 1.0_read
+
+# for lf by month
+load(paste0(dir.rdat, &quot;lf.Rdata&quot;))                                      # from 1.0_read
+group.region &lt;- read.table(paste0(dir.dat,&#39;caa_group_region.txt&#39;),header=T)
+group.gear &lt;- read.table(paste0(dir.dat,&#39;caa_group_gear.txt&#39;),header=T)</code></pre>
+</div>
+</div>
+<div id="level-specific-length-frequencies" class="section level1">
+<h1><span class="header-section-number">2</span> LEVEL SPECIFIC LENGTH-FREQUENCIES</h1>
+<div id="by-trimester" class="section level2">
+<h2><span class="header-section-number">2.1</span> BY TRIMESTER</h2>
+<div id="prepatation" class="section level3">
+<h3><span class="header-section-number">2.1.1</span> Prepatation</h3>
+<p>Which cal level (gear/period/region) has sufficient samples?</p>
+<pre class="r"><code># levels considered
+gears &lt;- c(&#39;Gillnets&#39;,&#39;Lines&#39;,&#39;Seines_Nets_Traps_Weirs&#39;)
+regions &lt;- c(&#39;eNL&#39;,&#39;sGSL&#39;,&#39;SS&#39;,&#39;wNL&#39;)
+period &lt;- 2:4
+
+by &lt;- c(&#39;year&#39;,&#39;gear&#39;,&#39;region&#39;,&#39;period&#39;)
+
+# subset
+this.lf &lt;- lf.caa[lf.caa$gear %in% gears &amp; 
+                  lf.caa$region %in% regions &amp;
+                  lf.caa$period %in% period &amp; 
+                  lf.caa$year %in% 1976:2019,]
+
+# get cal by just taking the average -&gt; equal weight to all samples!! This is the same as if get.samples would have been used.
+cal &lt;- ddply(this.lf,by,transform,prop=n/sum(n)) 
+cal &lt;- ddply(cal,c(by,&#39;length&#39;),summarise,lf=mean(prop),n=sum(n),N=length(unique(sample.id)))
+cal &lt;- ddply(cal,by,transform,N=max(N))
+
+# cal with only one sample: remove
+cal &lt;- cal[cal$N&gt;1,]</code></pre>
+<div id="check" class="section level4 tabset">
+<h4><span class="header-section-number">2.1.1.1</span> CHECK</h4>
+<div id="availability" class="section level5">
+<h5><span class="header-section-number">2.1.1.1.1</span> availability</h5>
+<pre class="r"><code>ggplot(unique(cal[,c(by,&#39;N&#39;)]),aes(x=year,y=interaction(gear,region,period)))+
+  geom_point(aes(size=N,col=N))+
+  scale_color_viridis_c()</code></pre>
+<p><img src="4.1_cal_pop_files/figure-html/cal%20check%20avail-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+</div>
+<div id="calculation" class="section level3">
+<h3><span class="header-section-number">2.1.2</span> Calculation</h3>
+<pre class="r"><code># get cal for each region
+cal &lt;- this.lf[(this.lf$region==&#39;sGSL&#39; &amp; this.lf$gear==&#39;Lines&#39; &amp; this.lf$period %in% 3)|    # southern Gulf (gillnets = dome sel + earlier)
+           (this.lf$region==&#39;SS&#39; &amp; this.lf$gear==&#39;Seines_Nets_Traps_Weirs&#39; &amp; this.lf$period==2)| # scotian shelf
+           (this.lf$region==&#39;wNL&#39; &amp; this.lf$gear==&#39;Seines_Nets_Traps_Weirs&#39; &amp; this.lf$period %in% 3:4)| # wNL
+           (this.lf$region==&#39;eNL&#39; &amp; this.lf$gear==&#39;Seines_Nets_Traps_Weirs&#39; &amp; this.lf$period %in% 3:4) # eNL  
+           ,]
+cal[cal$region %in% c(&#39;eNL&#39;,&#39;wNL&#39;),&#39;period&#39;] &lt;- &#39;3-4&#39;
+cal &lt;- cal[cal$length&gt;210,]                                             # remove tiny fish in the occasional sample
+
+# get cal by just taking the average -&gt; equal weight to all samples!! This is the same as if get.samples would have been used.
+cal &lt;- ddply(cal,c(by,&#39;length&#39;),summarise,n=sum(n),N=length(unique(sample.id)))  # For NL periods 3 and 4 are combined!
+cal &lt;- ddply(cal,by,transform,prop=n/sum(n),N=max(N),ntot=sum(n),med=median(rep.int(length,n)))
+
+# cal with only one sample: remove
+cal &lt;- cal[cal$N&gt;1,]</code></pre>
+<div id="plots" class="section level4 tabset">
+<h4><span class="header-section-number">2.1.2.1</span> PLOTS</h4>
+<div id="cal" class="section level5">
+<h5><span class="header-section-number">2.1.2.1.1</span> cal</h5>
+<pre class="r"><code>ggplot(cal) + 
+  geom_density_ridges(stat = &quot;identity&quot;, aes(x = length, y = year, height = prop,group=year,fill=region),alpha=0.6)+
+  geom_segment(aes(x=med,xend=med,y=year,yend=year+1))+
+  geom_text(aes(x=200,y=year,label=N),vjust=-0.1,hjust=0)+
+  facet_grid(.~region)+
+  scale_y_continuous(expand=c(0,0))+
+  theme_ridges()+
+  labs(y=&#39;&#39;,x=&#39;Length (cm)&#39;)+
+  scale_fill_viridis_d()</code></pre>
+<p><img src="4.1_cal_pop_files/figure-html/cal%20plot%20-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+<div id="corelation" class="section level5">
+<h5><span class="header-section-number">2.1.2.1.2</span> corelation</h5>
+<p>Exploratory. Check of correlation (overall) between median sizes (rough measure). Also checked correlation over time (rolling window): uninteresting because insufficient years.</p>
+<pre class="r"><code>df &lt;- as.data.frame.matrix(xtabs(med ~ year + region, unique(cal[,c(&#39;year&#39;,&#39;region&#39;,&#39;med&#39;)])))
+df[df==0] &lt;- NA
+
+chart.Correlation(df, histogram=TRUE, pch=19)</code></pre>
+<p><img src="4.1_cal_pop_files/figure-html/cal%20corr%20overall-1.png" width="768" style="display: block; margin: auto;" /></p>
+</div>
+<div id="lm" class="section level5">
+<h5><span class="header-section-number">2.1.2.1.3</span> lm</h5>
+<p>Exploratory. Check of correlation (overall) between median sizes (rough measure). Also checked correlation over time (rolling window): uninteresting because insufficient years.</p>
+<pre class="r"><code>df &lt;- unique(cal[,c(&#39;year&#39;,&#39;region&#39;,&#39;med&#39;)])
+df &lt;- dcast(df,year~region,value.var=&#39;med&#39;)
+
+cross &lt;- expand.grid(a=unique(cal$region),b=unique(cal$region))
+cross &lt;- cross[cross$a!=cross$b,]
+b &lt;- apply(cross,1,function(d){
+  x &lt;- df[,d[1]]
+  y &lt;- df[,d[2]]
+  m &lt;- robustbase::lmrob(formula = y ~ 0+x)
+  c(coef(m),summary(m)$coefficients[,4] )
+})
+out &lt;- cbind(cross,t(b))
+
+pstar &lt;- function(x,bonf=1){
+    lab &lt;- rep(&#39;&#39;,length(x))
+    lab[x&lt;0.1/bonf] &lt;- &#39;*&#39;
+    lab[x&lt;0.05/bonf] &lt;- &#39;**&#39;
+    lab[x&lt;0.01/bonf] &lt;- &#39;***&#39;
+    lab
+}
+
+out$star &lt;- pstar(out$V2)
+out &lt;- out[!(out$b==&#39;sGSL&#39; &amp; out$a!=&#39;sGSL&#39;) &amp; # not great code
+           !(out$b==&#39;eNL&#39; &amp; out$a %in% c(&#39;wNL&#39;)) &amp;
+           !(out$b==&#39;SS&#39; &amp; out$a %in% c(&#39;eNL&#39;,&#39;wNL&#39;)) &amp;
+           !(out$b==&#39;wNL&#39; &amp; out$a %in% c(&#39;wNL&#39;)),]
+
+ggplot(out,aes(x=a,y=b))+
+  geom_tile(aes(fill=x))+
+  geom_text(data=out[out$a!=out$b,],aes(label=round(x,2)))+
+  geom_text(data=out[out$a!=out$b,],aes(label=star),hjust=-1,vjust=-0.2)+
+  scale_fill_gradient2(low = &#39;darkred&#39;, mid = &#39;white&#39;, high = &#39;darkgreen&#39;,midpoint=1)+
+  theme(legend.position = &#39;none&#39;)+
+  scale_x_discrete(expand=c(0,0))+
+  scale_y_discrete(expand=c(0,0))+
+  labs(x=&#39;&#39;,y=&#39;&#39;)</code></pre>
+<p><img src="4.1_cal_pop_files/figure-html/cal%20lm-1.png" width="576" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+</div>
+</div>
+<div id="by-trimester-correction" class="section level2">
+<h2><span class="header-section-number">2.2</span> BY TRIMESTER (+ correction)</h2>
+<p>The above samples freqs still are influenced by day of the year; try and back-calculate to remove the effect. By keeping a split between regions, the only difference between them becomes the zonal difference and gear selectivity.</p>
+<p>Thought about removing the effect model-wise but can’t see how this would work (freqs ~ several non-linear effects, with missing levels)</p>
+<div id="preparation" class="section level3">
+<h3><span class="header-section-number">2.2.1</span> Preparation</h3>
+<pre class="r"><code>lf.lf &lt;- lf[!is.na(lf$length),c(&#39;year&#39;,&#39;date&#39;,&#39;nafo&#39;,&#39;gear.cat&#39;,&#39;length&#39;,&#39;n&#39;,&#39;sample.id&#39;)]
+
+## groupings
+lf.lf$region &lt;- group.region[match(lf.lf$nafo,group.region$nafo),&#39;region&#39;]
+lf.lf$nafo &lt;- NULL
+lf.lf$gear &lt;- group.gear[match(lf.lf$gear.cat,group.gear$gear.cat),&#39;gear.group&#39;]
+lf.lf$gear.cat &lt;- NULL
+
+## Append length-frequencies from carbio
+lf.bio &lt;- bio[!is.na(bio$length) &amp; bio$random==TRUE,c(&#39;year&#39;,&#39;date&#39;,&#39;nafo&#39;,&#39;gear&#39;,&#39;length&#39;,&#39;sample.id&#39;)]
+lf.bio$sample.id &lt;- -lf.bio$sample.id   # negative numbers for these samples for easy tracking
+lf.bio$region &lt;- group.region[match(lf.bio$nafo,group.region$nafo),&#39;region&#39;]
+lf.bio$nafo &lt;- NULL
+lf.bio$gear &lt;- group.gear[match(lf.bio$gear,group.gear$gear.cat),&#39;gear.group&#39;]
+lf.bio &lt;- ddply(lf.bio,c(&#39;year&#39;,&#39;date&#39;,&#39;region&#39;,&#39;gear&#39;,&#39;length&#39;,&#39;sample.id&#39;),summarise,n=length(year)) # get freqs
+
+lf.lf &lt;- rbind(lf.lf,lf.bio)
+
+## make equal length classes (consistency)
+lf.lf$length &lt;-roundFish(lf.lf$length,5) 
+
+## select one gear per region (because can&#39;t adjust for varying selectivities)
+lf.lf &lt;- lf.lf[(lf.lf$region==&#39;sGSL&#39; &amp; lf.lf$gear==&#39;Lines&#39;)|    # southern Gulf (gillnets = dome sel + earlier)
+           (lf.lf$region==&#39;SS&#39; &amp; lf.lf$gear==&#39;Seines_Nets_Traps_Weirs&#39;)| # scotian shelf
+           (lf.lf$region==&#39;wNL&#39; &amp; lf.lf$gear==&#39;Seines_Nets_Traps_Weirs&#39;)| # wNL
+           (lf.lf$region==&#39;eNL&#39; &amp; lf.lf$gear==&#39;Seines_Nets_Traps_Weirs&#39;) # eNL  
+           ,]
+lf.lf &lt;- lf.lf[lf.lf$length&gt;210,]                                             # remove tiny fish in the occasional sample
+
+## correct length for date
+# 1) get age-length data
+al.mod &lt;- bio[!is.na(bio$year) &amp; !is.na(bio$length) &amp; !is.na(bio$agef),c(&#39;year&#39;,&#39;doy&#39;,&#39;length&#39;,&#39;agef&#39;)]
+al.mod$age &lt;- with(al.mod,ifelse(doy&lt;172,agef-(172-doy)/365,agef+(doy-172)/365)) # 172 = 21st of July spawning
+al.mod$cohort &lt;- with(al.mod,year-agef)
+
+#2) clean age-length data 
+al.mod &lt;- al.mod[al.mod$agef&lt;18,]
+al.mod &lt;- ddply(al.mod,c(&#39;agef&#39;),transform,outlier=outlier(length,coef=3)) # identify overall extremes (see caa)
+table(al.mod$outlier)
+## 
+##  FALSE   TRUE 
+## 120810    134
+al.mod &lt;- al.mod[al.mod$outlier==FALSE,]
+al.mod &lt;- al.mod[!(al.mod$agef==0 &amp;al.mod$length&gt;275),] # problem with convergence
+
+p &lt;- ggplot(al.mod,aes(x=age,y=length))+
+  geom_point()+
+  facet_wrap(~cohort)
+
+# 3) fit model by cohort (brute forece inits till it fits)
+library(FSA)
+vb &lt;- length~Linf*(1-exp(-K*(age-t0)))
+inits &lt;- ddply(al.mod[al.mod$cohort %in% 1973:2014,],c(&#39;cohort&#39;),function(x)unlist(FSA::vbStarts(length~age,data=x)))
+mods &lt;- lapply(1973:2014,function(x){
+  i &lt;- 1
+  f &lt;- NULL
+  while(i &lt; nrow(inits)&amp;class(f)!=&#39;nls&#39;){
+    ini &lt;- inits[i,-1]
+    f &lt;- try(nls(vb,data=al.mod[al.mod$cohort==x,],start=as.list(ini)), silent=TRUE)
+    i &lt;- i+1
+  }
+  return(f)
+})
+coefs &lt;- ldply(mods,coef)</code></pre>
+</div>
+<div id="calculation-1" class="section level3">
+<h3><span class="header-section-number">2.2.2</span> Calculation</h3>
+<p>Did not do this because realized not such a good idea.</p>
+<ul>
+<li>result will depend on the type of growth curve used (bertalanffy vs a seasonal one like Somers). What to use?</li>
+<li>growth differs significantly between cohorts yet I cannot apply the correct cohort model (length is insufficient to guess the cohort)</li>
+</ul>
+<p>Any back-calculation with thus be overly simple and dependent on the assumptions (e.g., using one overall Von Bertalanffy curve would be necessary). Is a half-baked attempt worth it? Note that size distributions by region will never be fully comparable anyway, given that the southern gulf is dominated by a different gear type (selectivity) and that different availability of fish in the regions will induce differences as well (NL presumably having proportionally more larger fish). Because we have CAA by region, focusing on size here seems redundant.</p>
+</div>
+</div>
+<div id="by-month" class="section level2">
+<h2><span class="header-section-number">2.3</span> BY MONTH</h2>
+<div id="calculation-2" class="section level3">
+<h3><span class="header-section-number">2.3.1</span> Calculation</h3>
+<pre class="r"><code># get cal for each region
+lf.month &lt;- lf[,c(&#39;year&#39;,&#39;month&#39;,&#39;nafo&#39;,&#39;gear.cat&#39;,&#39;length&#39;,&#39;n&#39;,&#39;sample.id&#39;)]
+
+lf.month$region &lt;- group.region[match(lf.month$nafo,group.region$nafo),&#39;region&#39;]
+lf.month$gear &lt;- group.gear[match(lf.month$gear.cat,group.gear$gear.cat),&#39;gear.group&#39;]
+lf.month$length &lt;-roundFish(lf.month$length,5)  
+
+lf.month &lt;- lf.month[(lf.month$region==&#39;sGSL&#39; &amp; lf.month$gear==&#39;Lines&#39;)|    # sGSL
+           (lf.month$region==&#39;SS&#39; &amp; lf.month$gear==&#39;Seines_Nets_Traps_Weirs&#39;)| # SS
+           (lf.month$region==&#39;wNL&#39; &amp; lf.month$gear==&#39;Seines_Nets_Traps_Weirs&#39;)| # wNL
+           (lf.month$region==&#39;eNL&#39; &amp; lf.month$gear==&#39;Seines_Nets_Traps_Weirs&#39;) # eNL  
+           ,]
+
+this.lf &lt;- ddply(lf.month,c(&#39;year&#39;,&#39;month&#39;,&#39;region&#39;,&#39;length&#39;),summarise,n=sum(n),N=length(unique(sample.id)))
+this.lf &lt;- ddply(this.lf,c(&#39;year&#39;,&#39;month&#39;,&#39;region&#39;),transform,prop=n/sum(n),N=max(N),ntot=sum(n),med=median(rep.int(length,n)))</code></pre>
+<div id="plots-1" class="section level4 tabset">
+<h4><span class="header-section-number">2.3.1.1</span> PLOTS</h4>
+<pre class="r"><code>regions &lt;- unique(this.lf$region)
+ps &lt;- lapply(regions,function(x)ggplot(this.lf[this.lf$region==x,]) + 
+    geom_density_ridges(stat = &quot;identity&quot;, aes(x = length, y = year, height = prop,group=year,fill=month),alpha=0.6)+
+    geom_segment(aes(x=med,xend=med,y=year,yend=year+1))+
+    geom_text(aes(x=200,y=year,label=N),vjust=-0.1,hjust=0)+
+    facet_grid(.~month)+
+    scale_y_continuous(expand=c(0,0))+
+    theme_ridges()+theme(legend.position=&#39;none&#39;)+
+    labs(y=&#39;&#39;,x=&#39;Length (cm)&#39;)+
+    scale_fill_viridis_c())
+names(ps) &lt;- regions</code></pre>
+<div id="ss" class="section level5">
+<h5><span class="header-section-number">2.3.1.1.1</span> SS</h5>
+<pre class="r"><code>ps[&#39;SS&#39;]
+## $SS</code></pre>
+<p><img src="4.1_cal_pop_files/figure-html/cal%20month%20SS-1.png" width="1152" style="display: block; margin: auto;" /></p>
+</div>
+<div id="sgsl" class="section level5">
+<h5><span class="header-section-number">2.3.1.1.2</span> sGSL</h5>
+<pre class="r"><code>ps[&#39;sGSL&#39;]
+## $sGSL</code></pre>
+<p><img src="4.1_cal_pop_files/figure-html/cal%20month%20sGSL-1.png" width="1152" style="display: block; margin: auto;" /></p>
+</div>
+<div id="wnl" class="section level5">
+<h5><span class="header-section-number">2.3.1.1.3</span> wNL</h5>
+<pre class="r"><code>ps[&#39;wNL&#39;]
+## $wNL</code></pre>
+<p><img src="4.1_cal_pop_files/figure-html/cal%20month%20wNL-1.png" width="1152" style="display: block; margin: auto;" /></p>
+</div>
+<div id="enl" class="section level5">
+<h5><span class="header-section-number">2.3.1.1.4</span> eNL</h5>
+<pre class="r"><code>ps[&#39;eNL&#39;]
+## $eNL</code></pre>
+<p><img src="4.1_cal_pop_files/figure-html/cal%20month%20eNL-1.png" width="960" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

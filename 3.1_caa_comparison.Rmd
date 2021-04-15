@@ -15,7 +15,7 @@ output:
 ```{r markdown, echo=F}
 library(knitr)
 opts_chunk$set(echo = T, collapse = T, fig.align = "center", fig.width = 9, fig.height = 6)
-options(width = 120)
+options(width = 140)
 ```    
 
 ## settings
@@ -39,8 +39,8 @@ waa.old <- read.ices(url(paste0(repo,'data/',year,'/cw.dat',"?raw=true")))
 
 ## Bindind and scaling
 ```{r wrangle, message = F}
-caa.old <- melt(as.matrix(caa.old),varnames=c('year','age'),value.name='caan.old')
-waa.old <- melt(as.matrix(waa.old),varnames=c('year','age'),value.name='waa.old')
+caa.old <- reshape2::melt(as.matrix(caa.old),varnames=c('year','age'),value.name='caan.old')
+waa.old <- reshape2::melt(as.matrix(waa.old),varnames=c('year','age'),value.name='waa.old')
 
 caa.comp <- Reduce(function(x, y) merge(x, y, all.x=TRUE), list(caa, caa.old, waa.old))
 caa.comp <- caa.comp[caa.comp$year %in% unique(caa.old$year),]                                                      # remove the recent years
@@ -65,8 +65,21 @@ grid.arrange(
 )
 ```
 
-## Residual relative
+## Residual absolute
+If the difference is more than 100% the dots/triangles are black
 ```{r plot 3}
+caa.comp$res <- with(caa.comp,(caan-caan.old)/caan.old)
+caa.comp$big <- ifelse(abs(caa.comp$res)>100,TRUE,FALSE)
+caa.comp$dir <- ifelse(caa.comp$res<0,'-',ifelse(caa.comp$res==0,'0','+'))
+ggplot()+
+    geom_point(data=caa.comp[caa.comp$big==FALSE,],aes(x=year,y=age,col=abs(res),shape=dir),size=4)+
+    geom_point(data=caa.comp[caa.comp$big==TRUE,],aes(x=year,y=age,shape=dir),col='black',size=4)+
+    labs(title='(NEW-OLD)/OLD')+
+    scale_color_viridis_c(direction = -1)
+```
+
+## Residual relative
+```{r plot 4}
 caa.comp$res <- with(caa.comp,caan.rel-caan.old.rel)
 caa.comp$col <- ifelse(caa.comp$res<0,'-',ifelse(caa.comp$res==0,'0','+'))
 ggplot(caa.comp,aes(x=year,y=age,size=abs(res),col=col))+
@@ -76,10 +89,12 @@ ggplot(caa.comp,aes(x=year,y=age,size=abs(res),col=col))+
 ```
 
 ## Correlation
-```{r plot 4}
+```{r plot 5}
+corr <- ddply(caa.comp[!is.na(caa.comp$caan.rel) & !is.na(caa.comp$caan.old.rel),],c('age'),summarise,corr=cor(caan.rel,caan.old.rel))
 ggplot(caa.comp,aes(x=caan.rel,y=caan.old.rel))+
     geom_point()+
     geom_text(aes(label=year),size=2,hjust=0,vjust=0)+
+    geom_text(data=corr,aes(x=-Inf,y=Inf,label=round(corr,2)),vjust=1,hjust=0,col='blue')+
     geom_abline(slope=1,intercept=0)+
     facet_wrap(~age,scale='free')
 ```
@@ -96,16 +111,20 @@ grid.arrange(
 
 ## side-wise by age
 ```{r plot 2b}
-df <- melt(caa.comp[,c('year','age','waa','waa.old')],id=c('year','age'))
-ggplot(df,aes(x=year,y=value,group=variable,col=variable))+geom_line(size=1)+facet_wrap(~age,scale='free')
-
+df <- reshape2::melt(caa.comp[,c('year','age','waa','waa.old')],id=c('year','age'))
+ggplot(df,aes(x=year,y=value,group=variable,col=variable))+
+  geom_line(size=1,alpha=0.6)+
+  facet_wrap(~age,scale='free')+
+  scale_color_manual(values=c('red','black'))
 ```
 
 ## Correlation
 ```{r plot 3b}
+corr <- ddply(caa.comp[!is.na(caa.comp$waa.old) & !is.na(caa.comp$waa),],c('age'),summarise,corr=cor(waa,waa.old))
 ggplot(caa.comp,aes(x=waa,y=waa.old))+
     geom_point()+
     geom_text(aes(label=year),size=2,hjust=0,vjust=0)+
+    geom_text(data=corr,aes(x=-Inf,y=Inf,label=round(corr,2)),vjust=1,hjust=0,col='blue')+
     geom_abline(slope=1,intercept=0)+
     facet_wrap(~age,scale='free')
 ```
