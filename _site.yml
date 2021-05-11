@@ -19,8 +19,10 @@ navbar:
           href: 3.0_caa.html
         - text: "Comparison"
           href: 3.1_caa_comparison.html
+        - text: "Assessment"
+          href: 3.2_caa_assessment.html
         - text: "Regional"
-          href: 3.2_caa_region.html
+          href: 3.3_caa_region.html
     - text: "CAL"
       menu:
         - text: "Overview"

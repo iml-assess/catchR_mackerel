@@ -170,7 +170,6 @@ if(!file.exists(bioR)){
     # add static ids if missing (here by month,day,nafo,gear), for mackerel always when no length is available
     v <- bio[is.na(bio$sample.id),]
     idchar <- do.call(paste0,list(month(v$date),day(v$date),v$nafo,v$gear))
-    bio[is.na(bio$sample.id),'sample.id'] <- get.id(idchar) #crazy high numbers help indicate difference
 
     # add info on whether samples were taken randomly or not (see readme.txt)
     random <- read.csv2(file=paste0(dir.bio,'carbio_random.csv'),sep=',')   # update after new bio
