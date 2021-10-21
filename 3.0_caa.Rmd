@@ -368,15 +368,18 @@ if(!all(file.exists(c(catch.diffusedR,caaR)))){
     catch.diffused <- get.samples(catch=catch.caa,
                        lf=lf.caa, 
                        al=bio.caa,
-                       tresh.lf=2,          # min samples for length-frequency
-                       tresh.al=2,          # min samples for age-length key
-                       period.unit='quarter')   # quarterly grouping instead of monthly
+                       min.lf.samples =2,          # min samples for length-frequency
+                       min.al.samples =2,          # min samples for age-length key
+                       min.al.fish = 5,
+                       period.unit='quarter', # quarterly grouping instead of monthly
+                       subsample = TRUE,     # age length keys are stratied subsamples, not necessarily matching the lf samples
+                       prob.al=0.75)        # max probability with which for a given length an age class might be missing in stratum specific  ALK
 
     catch.diffused$age.0 <- NULL                # remove age 0 (total landings somewhat smaller)
     save(catch.diffused, file =  catch.diffusedR)
     
     # step 2) get actual caa
-    caa <- get.caa(catch.diffused,plus=10)
+    caa <- get.caa(x=catch.diffused,plus=10)
     save(caa, file =  caaR)     
 }else{ 
     load(catch.diffusedR)
@@ -394,7 +397,7 @@ check <- ddply(catch.diffused,c('id','year','catch'),summarise,
                nfish.lengthfreq=sum(n.lf),
                option.agelength=unique(option.agelength),
                nsample.agelength=unique(nsample.agelength),
-               nfish.agekey=sum(n.agekey))
+               nfish.agekey=sum(n.al))
 check <- reshape::melt(check,id=c('id','year','catch'))
 ggplot(check,aes(x=value,fill=catch))+geom_histogram(bins=30,)+facet_wrap(~variable,scale='free')
 ```
@@ -446,9 +449,25 @@ ggplot(caa,aes(x=year,y=waa,group=age))+
     scale_color_viridis()
 ```
 
+### WAA.ci
+```{r waa_plot_ci, message = F, fig.height = 6,fig.width = 10}
+ggplot(caa,aes(x=year,y=waa,group=age))+
+    facet_wrap(~age,scale='free')+
+    geom_ribbon(aes(ymin=waa-2*waa.sd,ymax=waa+2*waa.sd),alpha=0.6)+
+    geom_line(size=1)
+```
+
 ### LAA
 ```{r laa_plot, message = F, fig.height = 4,fig.width = 10}
 ggplot(caa,aes(x=year,y=laa,group=age))+
     geom_line(aes(color=age),size=1)+
     scale_color_viridis()
+```
+
+### LAA.ci
+```{r laa_plot, message = F, fig.height = 6,fig.width = 10}
+ggplot(caa,aes(x=year,y=laa,group=age))+
+    facet_wrap(~age,scale='free')+
+    geom_ribbon(aes(ymin=laa-2*laa.sd,ymax=laa+2*laa.sd),alpha=0.6)+
+    geom_line(size=1)
 ```

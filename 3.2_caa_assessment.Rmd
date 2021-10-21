@@ -64,9 +64,13 @@ ggplot(d,aes(x=year,y=age))+
 # WAA plots {.tabset}
 ## Model predictions
 ```{r waa_fit, message = F, fig.height = 11,fig.width = 10}
-caa$cv <- 0.01 # need to calculate this!! this is absurdly small value so all predictions will match observed
+caa$waa.cv <- 0.01 # need to calculate this!! this is absurdly small value so all predictions will match observed
 caa[caa$caaw==0,'caaw'] <- NA # should be correct in get.caa function
-waa.fit <- with(caa, armatrix.fit(year=year,age=age,x=caaw,cv=cv))
+waa.fit <- with(caa, armatrix.fit(year=caa$year,age=caa$age,x=caa$waa,cv=caa$waa.cv))
+waa.fit
+
+caa$waa.cv <- with(caa,waa.sd/waa) # need to calculate this!! this is absurdly small value so all predictions will match observed
+waa.fit <- armatrix.fit(year=caa$year,age=caa$age,x=caa$waa,cv=caa$waa.cv)
 waa.fit
 ```
 
